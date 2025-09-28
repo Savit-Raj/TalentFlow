@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 
 import Layout from "./components/layout/Layout";
-import Index from "./pages/Index";
+import Index from "./pages/index";
 import JobsPage from "./pages/JobsPage";
 import JobDetail from "./components/jobs/JobDetail";
 import CandidatesPage from "./pages/CandidatesPage";
