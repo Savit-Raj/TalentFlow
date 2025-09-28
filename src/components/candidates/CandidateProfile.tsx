@@ -131,9 +131,6 @@ const CandidateProfile = () => {
         title: 'Note Added',
         description: 'Note has been added successfully.',
       });
-
-      // Refresh timeline
-      fetchCandidate();
     } catch (error: unknown) {
       toast({
         title: 'Error',
@@ -141,7 +138,7 @@ const CandidateProfile = () => {
         variant: 'destructive',
       });
     }
-  }, [candidate, toast, fetchCandidate]);
+  }, [candidate, toast]);
 
   const getStageColor = (stage: Candidate['stage']) => {
     const colors = {

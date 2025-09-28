@@ -7,6 +7,8 @@ A comprehensive, modern hiring platform built with React, TypeScript, and advanc
 **Figma Design Canvas:** https://www.figma.com/design/BKHwqMfsJlh0adLb3fdMHL/Untitled?node-id=0-1&t=GW5hvJammrohw8wF-1  
 **Interactive Prototype:** https://www.figma.com/proto/BKHwqMfsJlh0adLb3fdMHL/Untitled?page-id=0%3A1&node-id=1-2&p=f&viewport=81%2C192%2C0.22&t=fvA6l3KIZ8r04T3p-1&scaling=scale-down&content-scaling=fixed
 
+Changed the theme afterwards to enhance the UI/UX.
+
 ## Quick Start
 
 ```bash
@@ -23,7 +25,7 @@ npm run build
 npm run preview
 ```
 
-Access the application at `http://localhost:8080`
+Access the application at `https://talentflowsavit.vercel.app/`
 
 ## Core Features
 
@@ -36,7 +38,7 @@ Access the application at `http://localhost:8080`
 - **Unique Job Numbers**: 5-digit identifiers (10001-10025) for easy reference
 - **Archive System**: Soft delete with archive/unarchive functionality
 
-### 👥 Candidate Pipeline
+### Candidate Pipeline
 - **1000+ Candidate Management**: Efficient handling of large candidate pools
 - **Kanban Board**: Visual drag-and-drop stage management
 - **6-Stage Pipeline**: Applied → Screening → Technical → Offer → Hired → Rejected
