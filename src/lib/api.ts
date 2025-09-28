@@ -121,10 +121,21 @@ class ApiClient {
   }
 
   async updateJob(jobId: string, updates: Partial<Job>): Promise<ApiResult<Job>> {
-    return this.request<Job>(`/jobs/${jobId}`, {
+    const result = await this.request<Job>(`/jobs/${jobId}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
+    
+    if (result.data) {
+      // Convert date strings back to Date objects
+      result.data = {
+        ...result.data,
+        createdAt: new Date(result.data.createdAt),
+        updatedAt: new Date(result.data.updatedAt)
+      };
+    }
+    
+    return result;
   }
 
   async reorderJob(jobId: string, fromOrder: number, toOrder: number): Promise<ApiResult<{ success: boolean }>> {
