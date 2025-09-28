@@ -9,17 +9,18 @@
  * - Optimistic updates
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   DndContext,
-  closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   useDroppable,
+  DragOverlay,
+  rectIntersection,
 } from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -38,6 +39,55 @@ interface CandidatesKanbanProps {
   onCandidateClick: (candidate: Candidate) => void;
 }
 
+// Get candidate initials helper
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+// Candidate card content component (reusable)
+const CandidateCardContent = ({ candidate }: { candidate: Candidate }) => (
+  <CardContent className="p-3">
+    <div className="flex items-start space-x-3">
+      <div className="flex-shrink-0">
+        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+          <span className="text-xs font-semibold text-primary">
+            {getInitials(candidate.name)}
+          </span>
+        </div>
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <h4 className="text-sm font-semibold text-foreground truncate">
+          {candidate.name}
+        </h4>
+        <p className="text-xs text-muted-foreground truncate">
+          {candidate.email}
+        </p>
+        
+        {candidate.skills && candidate.skills.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {candidate.skills.slice(0, 2).map((skill) => (
+              <Badge key={skill} variant="secondary" className="text-xs px-1 py-0">
+                {skill}
+              </Badge>
+            ))}
+            {candidate.skills.length > 2 && (
+              <Badge variant="secondary" className="text-xs px-1 py-0">
+                +{candidate.skills.length - 2}
+              </Badge>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  </CardContent>
+);
+
 // Sortable candidate card for drag-and-drop
 const SortableCandidateCard = ({ 
   candidate, 
@@ -53,20 +103,15 @@ const SortableCandidateCard = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: candidate.id });
+  } = useSortable({ 
+    id: candidate.id,
+    data: { candidate }
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+    transition: isDragging ? 'none' : transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
@@ -74,48 +119,14 @@ const SortableCandidateCard = ({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
-      className={`mb-3 ${isDragging ? 'opacity-50' : ''}`}
+      className="mb-3 touch-none"
     >
       <Card 
-        className="cursor-pointer hover:shadow-md transition-shadow duration-200"
-        onClick={() => onCandidateClick(candidate)}
+        className="cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow duration-200 select-none"
+        onClick={() => !isDragging && onCandidateClick(candidate)}
+        {...listeners}
       >
-        <CardContent className="p-3">
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-xs font-semibold text-primary">
-                  {getInitials(candidate.name)}
-                </span>
-              </div>
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-semibold text-foreground truncate">
-                {candidate.name}
-              </h4>
-              <p className="text-xs text-muted-foreground truncate">
-                {candidate.email}
-              </p>
-              
-              {candidate.skills && candidate.skills.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {candidate.skills.slice(0, 2).map((skill) => (
-                    <Badge key={skill} variant="secondary" className="text-xs px-1 py-0">
-                      {skill}
-                    </Badge>
-                  ))}
-                  {candidate.skills.length > 2 && (
-                    <Badge variant="secondary" className="text-xs px-1 py-0">
-                      +{candidate.skills.length - 2}
-                    </Badge>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
+        <CandidateCardContent candidate={candidate} />
       </Card>
     </div>
   );
@@ -141,9 +152,14 @@ const DroppableStageColumn = ({
 };
 
 const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: CandidatesKanbanProps) => {
+  const [activeCandidate, setActiveCandidate] = useState<Candidate | null>(null);
   
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -169,14 +185,22 @@ const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: Candi
     rejected: { title: 'Rejected', color: 'bg-red-50 border-red-200' },
   };
 
+  // Handle drag start
+  const handleDragStart = (event: DragStartEvent) => {
+    const candidate = candidates.find(c => c.id === event.active.id);
+    setActiveCandidate(candidate || null);
+  };
+
   // Handle drag cancel
   const handleDragCancel = () => {
-    // Cleanup on drag cancel
+    setActiveCandidate(null);
   };
 
   // Handle drag end
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveCandidate(null);
+    
     const candidateId = active.id as string;
 
     // If dropped outside valid zone, do nothing (drag is cancelled)
@@ -207,7 +231,8 @@ const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: Candi
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={rectIntersection}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
@@ -246,6 +271,14 @@ const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: Candi
           );
         })}
       </div>
+      
+      <DragOverlay>
+        {activeCandidate ? (
+          <Card className="cursor-grabbing shadow-lg rotate-3 scale-105">
+            <CandidateCardContent candidate={activeCandidate} />
+          </Card>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 };
