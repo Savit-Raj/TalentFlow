@@ -10,8 +10,8 @@
  * - Click to navigate to profile
  */
 
-import { useState } from 'react';
-import { MoreHorizontal, Mail, Phone, MapPin, Briefcase, GraduationCap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MoreHorizontal, Mail, Phone, MapPin, Briefcase, GraduationCap, Building2 } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Badge } from '../ui/badge';
@@ -23,7 +23,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '../ui/dropdown-menu';
-import type { Candidate } from '@/lib/database';
+import { JobsApi } from '@/lib/api';
+import type { Candidate, Job } from '@/lib/database';
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -33,6 +34,23 @@ interface CandidateCardProps {
 
 const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [job, setJob] = useState<Job | null>(null);
+
+  // Fetch job information
+  useEffect(() => {
+    const fetchJob = async () => {
+      try {
+        const result = await JobsApi.getJobById(candidate.jobId);
+        if (result.data) {
+          setJob(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching job:', error);
+      }
+    };
+
+    fetchJob();
+  }, [candidate.jobId]);
 
   const handleStageUpdate = async (newStage: Candidate['stage']) => {
     if (newStage === candidate.stage) return;
@@ -112,6 +130,16 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
                     </div>
                   )}
                 </div>
+
+                {/* Job Information */}
+                {job && (
+                  <div className="flex items-center space-x-1 text-sm text-muted-foreground mb-1">
+                    <Building2 className="h-3 w-3" />
+                    <span className="font-medium text-primary">#{job.jobNumber}</span>
+                    <span>-</span>
+                    <span className="truncate">{job.title}</span>
+                  </div>
+                )}
 
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                   {candidate.location && (

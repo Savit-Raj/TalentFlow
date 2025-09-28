@@ -113,6 +113,21 @@ class ApiClient {
     return result;
   }
 
+  async getJobById(jobId: string): Promise<ApiResult<Job | null>> {
+    const result = await this.request<Job | null>(`/jobs/id/${jobId}`);
+    
+    if (result.data) {
+      // Convert date strings back to Date objects
+      result.data = {
+        ...result.data,
+        createdAt: new Date(result.data.createdAt),
+        updatedAt: new Date(result.data.updatedAt)
+      };
+    }
+    
+    return result;
+  }
+
   async createJob(jobData: Partial<Job>): Promise<ApiResult<Job>> {
     return this.request<Job>('/jobs', {
       method: 'POST',
@@ -214,6 +229,7 @@ const apiClient = new ApiClient();
 export const JobsApi = {
   getJobs: apiClient.getJobs.bind(apiClient),
   getJobByNumber: apiClient.getJobByNumber.bind(apiClient),
+  getJobById: apiClient.getJobById.bind(apiClient),
   createJob: apiClient.createJob.bind(apiClient),
   updateJob: apiClient.updateJob.bind(apiClient),
   reorderJob: apiClient.reorderJob.bind(apiClient),

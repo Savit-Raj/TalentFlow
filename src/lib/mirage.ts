@@ -147,6 +147,16 @@ export function makeServer({ environment = 'development' } = {}) {
         }
       });
 
+      this.get('/jobs/id/:jobId', async (_schema, request) => {
+        try {
+          const data = await loadData();
+          const job = data.jobs.find(j => j.id === request.params.jobId);
+          return job || null;
+        } catch {
+          return new Response(500, {}, { error: 'Database error' });
+        }
+      });
+
       this.post('/jobs', async (_schema, request) => {
         try {
           await simulateWriteOperation();

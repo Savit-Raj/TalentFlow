@@ -11,7 +11,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Briefcase, GraduationCap, Calendar } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, MapPin, Briefcase, GraduationCap, Calendar, Building2 } from 'lucide-react';
 
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
@@ -22,9 +22,9 @@ import { useToast } from '@/hooks/use-toast';
 
 import NotesSection from './NotesSection';
 import TimelineSection from './TimelineSection';
-import { CandidatesApi } from '@/lib/api';
+import { CandidatesApi, JobsApi } from '@/lib/api';
 import { db } from '@/lib/database';
-import type { Candidate, TimelineEntry } from '@/lib/database';
+import type { Candidate, TimelineEntry, Job } from '@/lib/database';
 
 const CandidateProfile = () => {
   const { email } = useParams<{ email: string }>();
@@ -32,6 +32,7 @@ const CandidateProfile = () => {
   const { toast } = useToast();
 
   const [candidate, setCandidate] = useState<Candidate | null>(null);
+  const [job, setJob] = useState<Job | null>(null);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -56,6 +57,12 @@ const CandidateProfile = () => {
       }
 
       setCandidate(candidateData);
+
+      // Fetch job information
+      const jobResult = await JobsApi.getJobById(candidateData.jobId);
+      if (jobResult.data) {
+        setJob(jobResult.data);
+      }
 
       // Fetch timeline
       const timelineResult = await CandidatesApi.getCandidateTimeline(candidateData.id);
@@ -236,6 +243,14 @@ const CandidateProfile = () => {
             <div>
               <h1 className="text-2xl font-bold text-foreground">{candidate.name}</h1>
               <p className="text-muted-foreground">{candidate.email}</p>
+              {job && (
+                <div className="flex items-center space-x-2 mt-1">
+                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Applied for <span className="font-medium text-primary">#{job.jobNumber}</span> - {job.title}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -254,6 +269,30 @@ const CandidateProfile = () => {
               <CardTitle>Candidate Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Job Information */}
+              {job && (
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <h4 className="text-sm font-semibold mb-2 flex items-center space-x-2">
+                    <Building2 className="h-4 w-4" />
+                    <span>Applied Position</span>
+                  </h4>
+                  <div className="space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="font-mono">#{job.jobNumber}</Badge>
+                      <span className="font-medium">{job.title}</span>
+                    </div>
+                    {job.location && (
+                      <p className="text-sm text-muted-foreground">{job.location}</p>
+                    )}
+                    {job.type && (
+                      <Badge variant="secondary" className="text-xs">
+                        {job.type.replace('-', ' ')}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )}
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
