@@ -17,6 +17,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
 } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import {
@@ -25,7 +26,6 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
-// import { useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -121,7 +121,27 @@ const SortableCandidateCard = ({
   );
 };
 
+// Droppable stage column
+const DroppableStageColumn = ({ 
+  stage, 
+  config, 
+  children 
+}: { 
+  stage: string; 
+  config: { title: string; color: string }; 
+  children: React.ReactNode;
+}) => {
+  const { setNodeRef } = useDroppable({ id: stage });
+  
+  return (
+    <Card ref={setNodeRef} className={`${config.color} min-h-[400px]`}>
+      {children}
+    </Card>
+  );
+};
+
 const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: CandidatesKanbanProps) => {
+  
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -149,18 +169,34 @@ const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: Candi
     rejected: { title: 'Rejected', color: 'bg-red-50 border-red-200' },
   };
 
+  // Handle drag cancel
+  const handleDragCancel = () => {
+    // Cleanup on drag cancel
+  };
+
   // Handle drag end
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
-    if (!over) return;
-
     const candidateId = active.id as string;
+
+    // If dropped outside valid zone, do nothing (drag is cancelled)
+    if (!over) {
+      return;
+    }
+
     const newStage = over.id as Candidate['stage'];
+    const validStages = ['applied', 'screen', 'tech', 'offer', 'hired', 'rejected'];
+    
+    // Validate the drop target is a valid stage
+    if (!validStages.includes(newStage)) {
+      return;
+    }
 
     // Find the candidate and check if stage actually changed
     const candidate = candidates.find(c => c.id === candidateId);
-    if (!candidate || candidate.stage === newStage) return;
+    if (!candidate || candidate.stage === newStage) {
+      return;
+    }
 
     // Update the candidate stage
     onStageUpdate(candidateId, newStage);
@@ -173,13 +209,14 @@ const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: Candi
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {Object.entries(stageConfig).map(([stage, config]) => {
           const stageCandidates = candidatesByStage[stage as Candidate['stage']] || [];
           
           return (
-            <Card key={stage} className={`${config.color} min-h-[400px]`}>
+            <DroppableStageColumn key={stage} stage={stage} config={config}>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-semibold flex items-center justify-between">
                   <span>{config.title}</span>
@@ -205,7 +242,7 @@ const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: Candi
                   </SortableContext>
                 </div>
               </CardContent>
-            </Card>
+            </DroppableStageColumn>
           );
         })}
       </div>
