@@ -13,7 +13,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MoreHorizontal, MapPin, DollarSign, Edit, Archive, RotateCcw, GripVertical } from 'lucide-react';
+import { MoreHorizontal, MapPin, Edit, Archive, RotateCcw, GripVertical } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Badge } from '../ui/badge';

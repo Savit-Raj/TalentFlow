@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, DollarSign, Calendar, Edit, Archive, RotateCcw } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Edit, Archive, RotateCcw } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Badge } from '@/components/ui/badge';
