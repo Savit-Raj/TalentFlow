@@ -189,19 +189,90 @@ export function makeServer({ environment = 'development' } = {}) {
         }
       });
 
-      this.put('/jobs/:id', async () => {
+      this.put('/jobs/:id', async (_schema, request) => {
         try {
           await simulateWriteOperation();
-          return new Response(501, {}, { error: 'Not implemented' });
+          
+          const jobId = request.params.id;
+          const updates = JSON.parse(request.requestBody || '{}');
+          
+          // Find job in IndexedDB and update
+          const job = await db.jobs.get(jobId);
+          if (!job) {
+            return new Response(404, {}, { error: 'Job not found' });
+          }
+          
+          const updatedJob = {
+            ...job,
+            ...updates,
+            updatedAt: new Date()
+          };
+          
+          await db.jobs.put(updatedJob);
+          
+          // Update cache
+          if (dataCache) {
+            const index = dataCache.jobs.findIndex(j => j.id === jobId);
+            if (index !== -1) {
+              dataCache.jobs[index] = updatedJob;
+            }
+          }
+          
+          return updatedJob;
         } catch (error) {
           return new Response(500, {}, { error: error instanceof Error ? error.message : 'Server error' });
         }
       });
 
-      this.post('/jobs/:id/reorder', async () => {
+      this.post('/jobs/:id/reorder', async (_schema, request) => {
         try {
           await simulateWriteOperation();
-          return new Response(501, {}, { error: 'Not implemented' });
+          
+          const jobId = request.params.id;
+          const { fromOrder, toOrder } = JSON.parse(request.requestBody || '{}');
+          
+          // Get all jobs and update their order
+          const jobs = await db.jobs.toArray();
+          
+          // Find the job being moved
+          const jobToMove = jobs.find(j => j.id === jobId);
+          if (!jobToMove) {
+            return new Response(404, {}, { error: 'Job not found' });
+          }
+          
+          // Update orders
+          const updates = [];
+          for (const job of jobs) {
+            let newOrder = job.order;
+            
+            if (job.id === jobId) {
+              newOrder = toOrder;
+            } else if (fromOrder < toOrder) {
+              // Moving down: shift jobs up
+              if (job.order > fromOrder && job.order <= toOrder) {
+                newOrder = job.order - 1;
+              }
+            } else {
+              // Moving up: shift jobs down
+              if (job.order >= toOrder && job.order < fromOrder) {
+                newOrder = job.order + 1;
+              }
+            }
+            
+            if (newOrder !== job.order) {
+              updates.push({ ...job, order: newOrder, updatedAt: new Date() });
+            }
+          }
+          
+          // Bulk update
+          await db.jobs.bulkPut(updates);
+          
+          // Update cache
+          if (dataCache) {
+            dataCache.jobs = await db.jobs.toArray();
+          }
+          
+          return { success: true };
         } catch (error) {
           return new Response(500, {}, { error: error instanceof Error ? error.message : 'Server error' });
         }
