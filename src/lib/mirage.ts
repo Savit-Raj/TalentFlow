@@ -7,6 +7,11 @@ import { createServer, Response } from 'miragejs';
 import { db } from './database';
 import type { Job, Candidate, Assessment } from './database';
 
+// Generate unique ID
+const generateId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
+
 interface TimelineItem {
   candidateId: string;
   createdAt: Date;
@@ -142,10 +147,43 @@ export function makeServer({ environment = 'development' } = {}) {
         }
       });
 
-      this.post('/jobs', async () => {
+      this.post('/jobs', async (_schema, request) => {
         try {
           await simulateWriteOperation();
-          return new Response(501, {}, { error: 'Not implemented' });
+          
+          const jobData = JSON.parse(request.requestBody || '{}');
+          
+          // Generate job number and ID
+          const data = await loadData();
+          const maxJobNumber = Math.max(...data.jobs.map(j => parseInt(j.jobNumber.replace('JOB-', ''))), 0);
+          const newJobNumber = `JOB-${String(maxJobNumber + 1).padStart(3, '0')}`;
+          
+          const newJob: Job = {
+            id: generateId(),
+            jobNumber: newJobNumber,
+            title: jobData.title || 'Untitled Job',
+            description: jobData.description || '',
+            slug: jobData.title ? jobData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'untitled-job',
+            requirements: jobData.requirements || [],
+            tags: jobData.tags || [],
+            status: jobData.status || 'active',
+            location: jobData.location,
+            type: jobData.type,
+            salary: jobData.salary,
+            order: data.jobs.length + 1,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          
+          // Save to IndexedDB
+          await db.jobs.add(newJob);
+          
+          // Update cache
+          if (dataCache) {
+            dataCache.jobs.push(newJob);
+          }
+          
+          return newJob;
         } catch (error) {
           return new Response(500, {}, { error: error instanceof Error ? error.message : 'Server error' });
         }

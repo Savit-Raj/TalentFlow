@@ -116,7 +116,9 @@ const JobDetail = () => {
 
   const formatSalary = (salary?: Job['salary']) => {
     if (!salary) return null;
-    return `$${salary.min.toLocaleString()} - $${salary.max.toLocaleString()} ${salary.currency}`;
+    const currencySymbols = { USD: '$', EUR: '€', INR: '₹' };
+    const symbol = currencySymbols[salary.currency as keyof typeof currencySymbols] || salary.currency;
+    return `${symbol}${salary.min.toLocaleString()} - ${symbol}${salary.max.toLocaleString()}`;
   };
 
   if (isLoading) {
@@ -216,7 +218,6 @@ const JobDetail = () => {
             
             {job.salary && (
               <div className="flex items-center space-x-1">
-                <DollarSign className="h-4 w-4" />
                 <span>{formatSalary(job.salary)}</span>
               </div>
             )}

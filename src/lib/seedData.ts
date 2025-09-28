@@ -121,7 +121,7 @@ const generateJobs = (): Job[] => {
       salary: {
         min: 80000 + Math.floor(Math.random() * 50000),
         max: 120000 + Math.floor(Math.random() * 80000),
-        currency: 'USD'
+        currency: getRandomItem(['USD', 'EUR', 'INR'])
       },
       createdAt,
       updatedAt: createdAt,
@@ -492,6 +492,13 @@ export const initializeDatabase = async (): Promise<void> => {
     console.error('❌ Error initializing database:', error);
     throw error;
   }
+};
+
+/**
+ * Force clear and reseed database
+ */
+export const clearAndReseedDatabase = async (): Promise<void> => {
+  await seedDatabase();
 };
 
 /**

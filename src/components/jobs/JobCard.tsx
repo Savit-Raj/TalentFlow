@@ -69,7 +69,9 @@ const JobCard = ({ job, onEdit, onArchive, onUnarchive, isDragging }: JobCardPro
 
   const formatSalary = (salary?: Job['salary']) => {
     if (!salary) return null;
-    return `$${salary.min.toLocaleString()} - $${salary.max.toLocaleString()}`;
+    const currencySymbols = { USD: '$', EUR: '€', INR: '₹' };
+    const symbol = currencySymbols[salary.currency as keyof typeof currencySymbols] || salary.currency;
+    return `${symbol}${salary.min.toLocaleString()} - ${symbol}${salary.max.toLocaleString()}`;
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -188,7 +190,6 @@ const JobCard = ({ job, onEdit, onArchive, onUnarchive, isDragging }: JobCardPro
             )}
             {job.salary && (
               <div className="flex items-center space-x-1">
-                <DollarSign className="h-3 w-3" />
                 <span>{formatSalary(job.salary)}</span>
               </div>
             )}
