@@ -388,10 +388,57 @@ export function makeServer({ environment = 'development' } = {}) {
         }
       });
 
-      this.post('/assessments/:jobId', async () => {
+      this.post('/assessments/:jobId', async (_schema, request) => {
         try {
           await simulateWriteOperation();
-          return new Response(501, {}, { error: 'Not implemented' });
+          
+          const jobId = request.params.jobId;
+          const assessmentData = JSON.parse(request.requestBody || '{}');
+          
+          // Check if assessment already exists
+          const existingAssessment = await db.assessments.where('jobId').equals(jobId).first();
+          
+          if (existingAssessment) {
+            // Update existing assessment
+            const updatedAssessment = {
+              ...existingAssessment,
+              ...assessmentData,
+              updatedAt: new Date()
+            };
+            
+            await db.assessments.put(updatedAssessment);
+            
+            // Update cache
+            if (dataCache) {
+              const index = dataCache.assessments.findIndex(a => a.id === existingAssessment.id);
+              if (index !== -1) {
+                dataCache.assessments[index] = updatedAssessment;
+              }
+            }
+            
+            return updatedAssessment;
+          } else {
+            // Create new assessment
+            const newAssessment: Assessment = {
+              id: generateId(),
+              jobId,
+              title: assessmentData.title || 'Job Assessment',
+              description: assessmentData.description || '',
+              sections: assessmentData.sections || [],
+              isActive: assessmentData.isActive ?? true,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+            
+            await db.assessments.add(newAssessment);
+            
+            // Update cache
+            if (dataCache) {
+              dataCache.assessments.push(newAssessment);
+            }
+            
+            return newAssessment;
+          }
         } catch (error) {
           return new Response(500, {}, { error: error instanceof Error ? error.message : 'Server error' });
         }
