@@ -126,7 +126,7 @@ const AssignmentManager = ({ jobId, assessment, onAssessmentSent }: AssignmentMa
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCandidates, toast]);
+  }, [selectedCandidates, toast, onAssessmentSent]);
 
   const getStatusBadge = (status: 'pending' | 'sent' | 'completed') => {
     switch (status) {

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { JobsApi, CandidatesApi } from '@/lib/api';
-import type { Job, Candidate } from '@/lib/database';
+import type { Job } from '@/lib/database';
 
 interface JobAnalysis {
   job: Job;

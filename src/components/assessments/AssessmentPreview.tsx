@@ -16,7 +16,7 @@ interface AssessmentPreviewProps {
   assessment: Assessment;
   showTimer?: boolean;
   timerState?: { timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean };
-  onTimerUpdate?: (state: { timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean }) => void;
+  onTimerUpdate?: (updater: (prev: { timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean }) => { timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean }) => void;
 }
 
 const QuestionPreview = ({ question, value, onChange }: {
@@ -167,7 +167,7 @@ const AssessmentPreview = ({ assessment, showTimer = false, timerState, onTimerU
     if (!showTimer || isTimeUp || timeRemaining <= 0 || isSubmitted) return;
 
     const timer = setInterval(() => {
-      onTimerUpdate?.(prev => {
+      onTimerUpdate?.((prev) => {
         const newTimeRemaining = prev.timeRemaining - 1;
         if (newTimeRemaining <= 0) {
           return { timeRemaining: 0, isTimeUp: true, isSubmitted: prev.isSubmitted };
@@ -236,7 +236,7 @@ const AssessmentPreview = ({ assessment, showTimer = false, timerState, onTimerU
       return;
     }
     
-    onTimerUpdate?.(prev => ({ ...prev, isSubmitted: true }));
+    onTimerUpdate?.((prev) => ({ ...prev, isSubmitted: true }));
     toast({
       title: 'Assessment Submitted',
       description: 'Your assessment has been submitted successfully!',
