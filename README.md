@@ -542,7 +542,6 @@ All API responses follow a consistent error format:
 - **Lazy Loading**: Component-level lazy loading for better performance
 
 ### User Experience
-- **Progressive Enhancement**: Works without JavaScript for basic functionality
 - **Offline Support**: IndexedDB enables offline data access
 - **Responsive Design**: Mobile-first with touch-friendly interactions
 - **Accessibility**: Screen reader support and keyboard navigation
@@ -556,11 +555,37 @@ All API responses follow a consistent error format:
 ## Design System
 
 ### Color Palette
-- **Primary**: Blue gradient (#3B82F6 to #1D4ED8)
-- **Secondary**: Gray scale for neutral elements
-- **Success**: Green (#10B981)
-- **Warning**: Yellow (#F59E0B)
-- **Error**: Red (#EF4444)
+```css
+/* Primary - Emerald Green */
+--primary: hsl(160 84% 39%);
+--primary-light: hsl(160 84% 49%);
+--primary-dark: hsl(160 84% 29%);
+
+/* Secondary - Neutral Gray */
+--secondary: hsl(240 5% 96%);
+--secondary-foreground: hsl(240 6% 25%);
+
+/* Accent - Forest Green */
+--accent: hsl(158 64% 52%);
+--accent-foreground: hsl(0 0% 100%);
+
+/* Status Colors */
+--success: hsl(142 76% 36%);
+--warning: hsl(38 92% 50%);
+--destructive: hsl(0 84% 60%);
+
+/* Background & Foreground */
+--background: hsl(0 0% 100%);      /* Light */
+--foreground: hsl(240 10% 15%);
+
+--background-dark: hsl(240 10% 8%);   /* Dark */
+--foreground-dark: hsl(240 5% 92%);
+
+/* Gradients */
+--gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(158 64% 52%));
+--gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(240 5% 98%));
+--gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(240 5% 99%) 100%);
+```
 
 ### Typography
 - **Font Family**: Inter (system fallback)
@@ -621,14 +646,11 @@ All API responses follow a consistent error format:
 ## Known Issues & Limitations
 
 ### Current Limitations
-- **No Authentication**: Single-user application without login system
 - **Mock Backend**: Uses MirageJS instead of real backend (production-ready)
 - **Limited File Upload**: File upload questions are UI-only
 - **No Email Integration**: Assessment assignments are manual
-- **Basic Reporting**: Analytics are counts and percentages only
 - **No Real-time Collaboration**: Single-user editing sessions
 - **Mock Timeline**: Timeline entries are generated, not real interactions
-- **Static Team Members**: @mention system uses predefined team list
 
 ### Future Enhancements
 - **Multi-tenant Support**: Organization and user management
@@ -660,10 +682,10 @@ All API responses follow a consistent error format:
 ## Deployment
 
 ### Production Ready
-✅ **MirageJS included in production build**  
-✅ **SPA routing configured (vercel.json)**  
-✅ **IndexedDB for offline functionality**  
-✅ **All dependencies properly configured**
+- **MirageJS included in production build**  
+- **SPA routing configured (vercel.json)**  
+- **IndexedDB for offline functionality**  
+- **All dependencies properly configured**
 
 ### Build Process
 ```bash
@@ -674,23 +696,12 @@ npm run build
 - **VITE_API_URL**: API endpoint (defaults to /api)
 - **VITE_ENVIRONMENT**: development | production
 
-### Hosting Recommendations
-- **Vercel**: Optimized for React applications (pre-configured)
-- **Netlify**: Static site hosting with form handling
-- **AWS S3 + CloudFront**: Scalable static hosting
-- **GitHub Pages**: Free hosting for open source projects
-
 ### Deployment Notes
 - Application works fully offline with IndexedDB
 - Mock API server runs in production environment
 - No backend infrastructure required
 
 ## Performance Metrics
-
-### Bundle Size
-- **Initial Bundle**: ~150KB gzipped
-- **Vendor Bundle**: ~200KB gzipped
-- **Total Assets**: ~350KB gzipped
 
 ### Runtime Performance
 - **First Contentful Paint**: <1.5s
@@ -703,26 +714,6 @@ npm run build
 - **25 Jobs**: Instant search and reordering with unique job numbers (10001-10025)
 - **Complex Assessments**: 10+ questions with conditional logic
 - **Job-Candidate Linking**: Each candidate properly linked to applied job position
-
-## Contributing
-
-### Development Setup
-1. Clone repository
-2. Install dependencies: `npm install`
-3. Start development server: `npm run dev`
-4. Open browser to `http://localhost:8080`
-
-### Code Standards
-- **TypeScript**: Strict mode enabled
-- **ESLint**: Airbnb configuration
-- **Prettier**: Automatic code formatting
-- **Conventional Commits**: Semantic commit messages
-
-### Pull Request Process
-1. Create feature branch from main
-2. Implement changes with tests
-3. Update documentation
-4. Submit pull request with description
 
 ## Acknowledgments
 
@@ -743,4 +734,4 @@ For licensing inquiries, contact: savitraj81597@gmail.com
 ---
 
 **Built with Love for modern hiring teams**  
-**© 2024 Savit Raj. TalentFlow™ is a trademark. All rights reserved.**
+**© 2025 Savit Raj. TalentFlow™ is a trademark. All rights reserved.**
