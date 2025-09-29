@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { FileText, AlertCircle } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { FileText, AlertCircle, Timer } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +18,7 @@ interface CandidateAssessmentFormProps {
   onSubmit: (responses: Record<string, string | number | string[]>) => Promise<void>;
   initialResponses?: Record<string, string | number | string[]>;
   isSubmitting?: boolean;
+  timeLimit?: number; // in minutes
 }
 
 const QuestionRenderer = ({ 
@@ -197,12 +198,46 @@ const CandidateAssessmentForm = ({
   assessment, 
   onSubmit, 
   initialResponses = {},
-  isSubmitting = false 
+  isSubmitting = false,
+  timeLimit = 2 // default 2 minutes
 }: Omit<CandidateAssessmentFormProps, 'candidateId'>) => {
   const { toast } = useToast();
   const [responses, setResponses] = useState<Record<string, string | number | string[]>>(initialResponses);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentSection, setCurrentSection] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(timeLimit * 60); // convert to seconds
+  const [isTimeUp, setIsTimeUp] = useState(false);
+
+  // Timer effect
+  useEffect(() => {
+    if (timeRemaining <= 0) {
+      setIsTimeUp(true);
+      toast({
+        title: 'Time Up!',
+        description: 'The assessment time has expired. Please submit your current progress.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          setIsTimeUp(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeRemaining, toast]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleResponseChange = useCallback((questionId: string, value: string | number | string[]) => {
     setResponses(prev => ({
@@ -322,6 +357,23 @@ const CandidateAssessmentForm = ({
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Timer */}
+      <Card className={`border-2 ${isTimeUp ? 'border-red-500 bg-red-50' : timeRemaining <= 60 ? 'border-orange-500 bg-orange-50' : 'border-blue-500 bg-blue-50'}`}>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-center space-x-3">
+            <Timer className={`h-6 w-6 ${isTimeUp ? 'text-red-600' : timeRemaining <= 60 ? 'text-orange-600' : 'text-blue-600'}`} />
+            <div className="text-center">
+              <div className={`text-2xl font-bold ${isTimeUp ? 'text-red-600' : timeRemaining <= 60 ? 'text-orange-600' : 'text-blue-600'}`}>
+                {formatTime(timeRemaining)}
+              </div>
+              <p className={`text-sm ${isTimeUp ? 'text-red-700' : timeRemaining <= 60 ? 'text-orange-700' : 'text-blue-700'}`}>
+                {isTimeUp ? 'Time expired!' : 'Time remaining'}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Header */}
       <Card>
         <CardHeader>
@@ -402,11 +454,12 @@ const CandidateAssessmentForm = ({
             onClick={handleSubmit}
             disabled={isSubmitting}
             size="lg"
+            variant={isTimeUp ? 'destructive' : 'default'}
           >
-            Submit Assessment
+            {isTimeUp ? 'Submit Now (Time Up)' : 'Submit Assessment'}
           </Button>
         ) : (
-          <Button onClick={handleNextSection}>
+          <Button onClick={handleNextSection} disabled={isTimeUp}>
             Next
           </Button>
         )}

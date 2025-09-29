@@ -19,6 +19,8 @@ const AssessmentsBoard = () => {
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'builder' | 'preview' | 'assignments'>('builder');
+  const [isAssessmentSent, setIsAssessmentSent] = useState(false);
+  const [timerState, setTimerState] = useState<{ timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean }>({ timeRemaining: 120, isTimeUp: false, isSubmitted: false });
 
   // Fetch active jobs
   useEffect(() => {
@@ -155,11 +157,23 @@ const AssessmentsBoard = () => {
           )}
 
           {activeTab === 'preview' && assessment && (
-            <AssessmentPreview assessment={assessment} />
+            <AssessmentPreview 
+              assessment={assessment} 
+              showTimer={isAssessmentSent} 
+              timerState={timerState}
+              onTimerUpdate={setTimerState}
+            />
           )}
 
           {activeTab === 'assignments' && assessment && (
-            <AssignmentManager jobId={selectedJobId} assessment={assessment} />
+            <AssignmentManager 
+              jobId={selectedJobId} 
+              assessment={assessment} 
+              onAssessmentSent={() => {
+                setIsAssessmentSent(true);
+                setTimerState({ timeRemaining: 120, isTimeUp: false, isSubmitted: false });
+              }}
+            />
           )}
         </>
       )}

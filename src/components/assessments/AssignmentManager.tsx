@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Users, Send, CheckCircle, Clock } from 'lucide-react';
+import { Users, Send, CheckCircle, Clock, Timer } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,14 +12,16 @@ import type { Assessment, Candidate } from '@/lib/database';
 interface AssignmentManagerProps {
   jobId: string;
   assessment: Assessment;
+  onAssessmentSent?: () => void;
 }
 
-const AssignmentManager = ({ jobId, assessment }: AssignmentManagerProps) => {
+const AssignmentManager = ({ jobId, assessment, onAssessmentSent }: AssignmentManagerProps) => {
   const { toast } = useToast();
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedCandidates, setSelectedCandidates] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
   const [assignments, setAssignments] = useState<Record<string, 'pending' | 'sent' | 'completed'>>({});
+  const [assessmentRuntime, setAssessmentRuntime] = useState<{ isActive: boolean; timeLimit: number }>({ isActive: false, timeLimit: 2 });
 
   // Fetch eligible candidates (not rejected or hired)
   useEffect(() => {
@@ -107,9 +109,13 @@ const AssignmentManager = ({ jobId, assessment }: AssignmentManagerProps) => {
       
       setSelectedCandidates(new Set());
       
+      // Start assessment runtime
+      setAssessmentRuntime({ isActive: true, timeLimit: 2 });
+      onAssessmentSent?.();
+      
       toast({
         title: 'Assessments Sent',
-        description: `Assessment sent to ${selectedCandidates.size} candidate(s)`,
+        description: `Assessment sent to ${selectedCandidates.size} candidate(s). Candidates have 2 minutes to complete.`,
       });
     } catch {
       toast({
@@ -149,6 +155,23 @@ const AssignmentManager = ({ jobId, assessment }: AssignmentManagerProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Assessment Runtime Status */}
+      {assessmentRuntime.isActive && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <Timer className="h-5 w-5 text-orange-600" />
+              <div>
+                <h3 className="font-semibold text-orange-800">Assessment Runtime Active</h3>
+                <p className="text-sm text-orange-700">
+                  Candidates have 2 minutes to complete the assessment.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Header */}
       <Card>
         <CardHeader>

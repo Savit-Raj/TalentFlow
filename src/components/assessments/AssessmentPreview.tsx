@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Eye, FileText } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Eye, FileText, Timer } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +14,9 @@ import type { Assessment, Question } from '@/lib/database';
 
 interface AssessmentPreviewProps {
   assessment: Assessment;
+  showTimer?: boolean;
+  timerState?: { timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean };
+  onTimerUpdate?: (state: { timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean }) => void;
 }
 
 const QuestionPreview = ({ question, value, onChange }: {
@@ -151,8 +155,35 @@ const QuestionPreview = ({ question, value, onChange }: {
   );
 };
 
-const AssessmentPreview = ({ assessment }: AssessmentPreviewProps) => {
+const AssessmentPreview = ({ assessment, showTimer = false, timerState, onTimerUpdate }: AssessmentPreviewProps) => {
+  const { toast } = useToast();
   const [responses, setResponses] = useState<Record<string, string | number | string[]>>({});
+  const timeRemaining = timerState?.timeRemaining ?? 120;
+  const isTimeUp = timerState?.isTimeUp ?? false;
+  const isSubmitted = timerState?.isSubmitted ?? false;
+
+  // Timer effect for preview
+  useEffect(() => {
+    if (!showTimer || isTimeUp || timeRemaining <= 0 || isSubmitted) return;
+
+    const timer = setInterval(() => {
+      onTimerUpdate?.(prev => {
+        const newTimeRemaining = prev.timeRemaining - 1;
+        if (newTimeRemaining <= 0) {
+          return { timeRemaining: 0, isTimeUp: true, isSubmitted: prev.isSubmitted };
+        }
+        return { timeRemaining: newTimeRemaining, isTimeUp: false, isSubmitted: prev.isSubmitted };
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [showTimer, isTimeUp, timeRemaining, onTimerUpdate, isSubmitted]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleResponseChange = (questionId: string, value: string | number | string[]) => {
     setResponses(prev => ({
@@ -205,11 +236,34 @@ const AssessmentPreview = ({ assessment }: AssessmentPreviewProps) => {
       return;
     }
     
-    alert('Assessment submitted successfully! (This is just a preview)');
+    onTimerUpdate?.(prev => ({ ...prev, isSubmitted: true }));
+    toast({
+      title: 'Assessment Submitted',
+      description: 'Your assessment has been submitted successfully!',
+    });
   };
 
   return (
     <div className="space-y-6">
+      {/* Timer Preview - only show if assessment has been sent */}
+      {showTimer && (
+        <Card className={`border-2 ${isTimeUp ? 'border-red-500 bg-red-50' : timeRemaining <= 60 ? 'border-orange-500 bg-orange-50' : 'border-blue-500 bg-blue-50'}`}>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-center space-x-3">
+              <Timer className={`h-6 w-6 ${isTimeUp ? 'text-red-600' : timeRemaining <= 60 ? 'text-orange-600' : 'text-blue-600'}`} />
+              <div className="text-center">
+                <div className={`text-2xl font-bold ${isTimeUp ? 'text-red-600' : timeRemaining <= 60 ? 'text-orange-600' : 'text-blue-600'}`}>
+                  {formatTime(timeRemaining)}
+                </div>
+                <p className={`text-sm ${isTimeUp ? 'text-red-700' : timeRemaining <= 60 ? 'text-orange-700' : 'text-blue-700'}`}>
+                  {isTimeUp ? 'Time expired!' : 'Time remaining (Preview)'}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header */}
       <Card>
         <CardHeader>
@@ -263,8 +317,13 @@ const AssessmentPreview = ({ assessment }: AssessmentPreviewProps) => {
 
       {/* Submit Button */}
       <div className="flex justify-end">
-        <Button onClick={handleSubmit} size="lg">
-          Submit Assessment (Preview)
+        <Button 
+          onClick={handleSubmit} 
+          size="lg"
+          variant={isTimeUp ? 'destructive' : 'default'}
+          disabled={isTimeUp || isSubmitted}
+        >
+          {isSubmitted ? 'Submitted (Preview)' : isTimeUp ? 'Time Expired (Preview)' : 'Submit Assessment (Preview)'}
         </Button>
       </div>
     </div>
