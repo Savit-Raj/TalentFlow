@@ -1,8 +1,17 @@
 {
   "name": "talentflow",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Your Name <your-email@example.com>",
+  "description": "TalentFlow - Professional Hiring Platform. A comprehensive, modern hiring platform built with React, TypeScript, and advanced web technologies.",
+  "keywords": ["hiring", "recruitment", "hr", "talent", "react", "typescript"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/talentflow.git"
+  },
+  "homepage": "https://talentflowsavit.vercel.app/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

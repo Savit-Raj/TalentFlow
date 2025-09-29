@@ -1,4 +1,7 @@
-# TalentFlow - Professional Hiring Platform
+# TalentFlow™ - Professional Hiring Platform
+
+> **Copyright © 2024 Savit Raj. All Rights Reserved.**  
+> **TalentFlow™ is a trademark of Savit Raj.**
 
 A comprehensive, modern hiring platform built with React, TypeScript, and advanced web technologies. TalentFlow streamlines the entire recruitment process from job posting to candidate management and assessment creation.
 
@@ -729,6 +732,15 @@ npm run build
 - **Dexie**: IndexedDB wrapper library
 - **MirageJS**: API mocking library
 
+## License
+
+This project is proprietary software. See the [LICENSE](LICENSE) file for details.
+
+**TalentFlow™** and all associated trademarks, logos, and branding are the property of Savit Raj. Unauthorized use is prohibited.
+
+For licensing inquiries, contact: savitraj81597@gmail.com
+
 ---
 
-**Built with Love for modern hiring teams**
+**Built with Love for modern hiring teams**  
+**© 2024 Savit Raj. TalentFlow™ is a trademark. All rights reserved.**
