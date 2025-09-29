@@ -22,11 +22,11 @@ const App = () => {
   useEffect(() => {
     const initialize = async () => {
       try {
-        console.log('🔄 Initializing database...');
+        console.log(' Initializing database...');
         await initializeDatabase();
-        console.log('✅ TalentFlow initialized successfully');
+        console.log(' TalentFlow initialized successfully');
       } catch (error) {
-        console.error('❌ Failed to initialize TalentFlow:', error);
+        console.error(' Failed to initialize TalentFlow:', error);
       }
     };
 

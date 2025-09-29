@@ -441,28 +441,28 @@ export const seedDatabase = async (): Promise<void> => {
     ]);
 
     // Generate and insert jobs
-    console.log('📝 Generating jobs...');
+    console.log(' Generating jobs...');
     const jobs = generateJobs();
     await db.jobs.bulkAdd(jobs);
 
     // Generate and insert candidates
-    console.log('👥 Generating candidates...');
+    console.log(' Generating candidates...');
     const candidates = generateCandidates(jobs);
     await db.candidates.bulkAdd(candidates);
 
     // Generate and insert assessments
-    console.log('📋 Generating assessments...');
+    console.log(' Generating assessments...');
     const assessments = generateAssessments(jobs);
     await db.assessments.bulkAdd(assessments);
 
     // Generate timeline entries
-    console.log('📅 Generating timeline entries...');
+    console.log(' Generating timeline entries...');
     await generateTimeline(candidates);
 
-    console.log('✅ Database seeding completed successfully!');
+    console.log(' Database seeding completed successfully!');
     console.log(`Generated: ${jobs.length} jobs, ${candidates.length} candidates, ${assessments.length} assessments`);
   } catch (error) {
-    console.error('❌ Error seeding database:', error);
+    console.error(' Error seeding database:', error);
     throw error;
   }
 };
@@ -485,11 +485,11 @@ export const initializeDatabase = async (): Promise<void> => {
         console.log('🔧 Schema changed, regenerating database...');
         await seedDatabase();
       } else {
-        console.log('✅ Database already populated, skipping seed');
+        console.log(' Database already populated, skipping seed');
       }
     }
   } catch (error) {
-    console.error('❌ Error initializing database:', error);
+    console.error(' Error initializing database:', error);
     throw error;
   }
 };
@@ -504,11 +504,11 @@ export const clearAndReseedDatabase = async (): Promise<void> => {
 /**
  * Why this seeding approach?
  * 
- * 1. **Realistic data**: Uses varied, believable names, companies, and scenarios
- * 2. **Proper distribution**: Stage distribution matches real hiring funnels
- * 3. **Relationship integrity**: All foreign keys properly reference existing entities
- * 4. **Performance**: Uses bulk operations for efficient data insertion
- * 5. **Comprehensive coverage**: Tests all features including complex assessments
- * 6. **Timeline generation**: Creates realistic interaction history for testing
- * 7. **Conditional seeding**: Only seeds empty databases to avoid duplicates
+ * 1. Realistic data: Uses varied, believable names, companies, and scenarios
+ * 2. Proper distribution: Stage distribution matches real hiring funnels
+ * 3. Relationship integrity: All foreign keys properly reference existing entities
+ * 4. Performance: Uses bulk operations for efficient data insertion
+ * 5. Comprehensive coverage: Tests all features including complex assessments
+ * 6. Timeline generation: Creates realistic interaction history for testing
+ * 7. Conditional seeding: Only seeds empty databases to avoid duplicates
  */

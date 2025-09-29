@@ -255,11 +255,11 @@ export const createTimelineEntry = async (
 /**
  * Why this architecture?
  * 
- * 1. **Dexie over raw IndexedDB**: Provides a clean, Promise-based API with TypeScript support
- * 2. **Comprehensive typing**: Every entity is fully typed for better developer experience
- * 3. **Automatic timestamps**: Hooks ensure data integrity without manual intervention
- * 4. **Validation functions**: Client-side validation prevents invalid data entry
- * 5. **Helper utilities**: Common operations like ID generation and slug creation are centralized
- * 6. **Timeline tracking**: Built-in audit trail for candidate interactions
- * 7. **Flexible schema**: Can handle complex assessment structures and conditional logic
+ * 1. Dexie over raw IndexedDB: Provides a clean, Promise-based API with TypeScript support
+ * 2. Comprehensive typing: Every entity is fully typed for better developer experience
+ * 3. Automatic timestamps: Hooks ensure data integrity without manual intervention
+ * 4. Validation functions: Client-side validation prevents invalid data entry
+ * 5. Helper utilities: Common operations like ID generation and slug creation are centralized
+ * 6. Timeline tracking: Built-in audit trail for candidate interactions
+ * 7. Flexible schema: Can handle complex assessment structures and conditional logic
  */

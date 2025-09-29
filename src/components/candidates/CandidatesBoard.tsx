@@ -192,7 +192,7 @@ const CandidatesBoard = () => {
             className="flex-1 sm:flex-none"
           >
             <List className="mr-1 sm:mr-2 h-4 w-4" />
-            <span className="hidden xs:inline">List</span>
+            <span className=" xs:inline">List</span>
           </Button>
           <Button
             variant={viewMode === 'kanban' ? 'default' : 'outline'}
@@ -201,7 +201,7 @@ const CandidatesBoard = () => {
             className="flex-1 sm:flex-none"
           >
             <LayoutGrid className="mr-1 sm:mr-2 h-4 w-4" />
-            <span className="hidden xs:inline">Kanban</span>
+            <span className=" xs:inline">Kanban</span>
           </Button>
         </div>
       </div>
