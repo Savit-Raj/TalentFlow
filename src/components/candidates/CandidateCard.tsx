@@ -99,9 +99,9 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
   return (
     <Card className="card-interactive group cursor-pointer hover:shadow-md transition-all duration-200">
       <CardContent className="p-4">
-        <div className="flex items-start space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
           {/* Avatar */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 self-center sm:self-start">
             <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
               <span className="text-sm font-semibold text-primary">
                 {getInitials(candidate.name)}
@@ -111,13 +111,13 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
 
           {/* Main Content */}
           <div className="flex-1 min-w-0" onClick={onClick}>
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-2 sm:space-y-0">
+              <div className="space-y-1 flex-1">
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                   {candidate.name}
                 </h3>
                 
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <Mail className="h-3 w-3" />
                     <span className="truncate">{candidate.email}</span>
@@ -141,7 +141,7 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
                   </div>
                 )}
 
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-sm text-muted-foreground">
                   {candidate.location && (
                     <div className="flex items-center space-x-1">
                       <MapPin className="h-3 w-3" />
@@ -165,7 +165,7 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-between sm:justify-end space-x-2 mt-2 sm:mt-0">
                 <Badge className={getStageColor(candidate.stage)}>
                   {getStageLabel(candidate.stage)}
                 </Badge>

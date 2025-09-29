@@ -189,17 +189,19 @@ const CandidatesBoard = () => {
             variant={viewMode === 'list' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setViewMode('list')}
+            className="flex-1 sm:flex-none"
           >
-            <List className="mr-2 h-4 w-4" />
-            List
+            <List className="mr-1 sm:mr-2 h-4 w-4" />
+            <span className="hidden xs:inline">List</span>
           </Button>
           <Button
             variant={viewMode === 'kanban' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setViewMode('kanban')}
+            className="flex-1 sm:flex-none"
           >
-            <LayoutGrid className="mr-2 h-4 w-4" />
-            Kanban
+            <LayoutGrid className="mr-1 sm:mr-2 h-4 w-4" />
+            <span className="hidden xs:inline">Kanban</span>
           </Button>
         </div>
       </div>
@@ -297,13 +299,13 @@ const CandidatesBoard = () => {
           
           {/* Pagination */}
           {filteredCandidates.length > pageSize && (
-            <div className="flex items-center justify-between pt-4">
-              <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4">
+              <p className="text-sm text-muted-foreground text-center sm:text-left">
                 Showing {((currentPage - 1) * pageSize) + 1} to{' '}
                 {Math.min(currentPage * pageSize, filteredCandidates.length)} of{' '}
                 {filteredCandidates.length} candidates
               </p>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -312,7 +314,7 @@ const CandidatesBoard = () => {
                 >
                   Previous
                 </Button>
-                <span className="text-sm">
+                <span className="text-sm whitespace-nowrap">
                   Page {currentPage} of {Math.ceil(filteredCandidates.length / pageSize)}
                 </span>
                 <Button
