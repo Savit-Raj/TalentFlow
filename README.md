@@ -29,6 +29,14 @@ Access the application at `https://talentflowsavit.vercel.app/`
 
 ## Core Features
 
+### Professional Dashboard
+- **Hero Section**: Gradient background with platform introduction
+- **Feature Cards**: Interactive cards showcasing platform capabilities
+- **Statistics Display**: Real-time platform statistics (25+ Jobs, 1000+ Candidates)
+- **Technology Stack**: Visual representation of technical architecture
+- **Call-to-Action**: Strategic navigation to key platform features
+- **Responsive Layout**: Mobile-optimized dashboard experience
+
 ### Jobs Management
 - **Create & Edit Jobs**: Full CRUD operations with rich job details
 - **Drag & Drop Reordering**: Visual job prioritization with optimistic updates
@@ -47,6 +55,13 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Candidate Profiles**: Detailed view with skills, experience, and education
 - **Timeline Tracking**: Complete audit trail of candidate interactions
 - **Notes System**: Rich text notes with @mention support
+- **Job-Candidate Linking**: Each candidate properly linked to applied job with job number display
+- **Profile Management**: Comprehensive candidate information including skills, experience, education
+- **Stage Management**: Easy stage transitions with timeline tracking
+- **@Mention System**: Team member mentions in notes with autocomplete
+- **Timeline Events**: Stage changes, notes, assessments, and interview scheduling
+- **Candidate Cards**: Professional candidate display with stage indicators
+- **Email-based Routing**: Direct candidate profile access via email URLs
 
 ### Assessment Builder
 - **Dynamic Form Creation**: Visual assessment builder with drag-and-drop
@@ -60,15 +75,32 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Section Organization**: Group questions into logical sections
 - **Live Preview**: Real-time assessment preview
 - **Assignment Management**: Assign assessments to specific candidates
+- **Assessment Analytics**: Comprehensive performance tracking across jobs
+- **Response Viewer**: Detailed view of candidate assessment submissions
+- **Assignment Manager**: Bulk assignment with candidate selection
+- **Candidate Assessment Form**: Timed assessment interface with validation
+- **Assessment Runtime**: Time-limited assessment sessions (2-minute default)
+- **Progress Tracking**: Real-time completion progress and analytics
+- **Status Management**: Draft, submitted, and reviewed status tracking
 
 ### Advanced UI/UX Features
 - **Responsive Design**: Mobile-first approach with breakpoint optimization
-- **Dark/Light Theme**: System preference detection with manual toggle
+- **Dark/Light Theme**: System preference detection with manual toggle button in header
+- **Theme Persistence**: LocalStorage-based theme preference saving
+- **Theme Toggle**: Moon/Sun icon button for seamless theme switching
+- **Consistent Stage Titles**: Fixed color stage names in kanban that remain visible in both themes
 - **Loading States**: Skeleton loaders and progress indicators
 - **Error Handling**: Graceful error recovery with user feedback
 - **Optimistic Updates**: Instant UI feedback with rollback on failure
 - **Toast Notifications**: Non-intrusive success/error messaging
 - **Accessibility**: WCAG compliant with keyboard navigation
+- **Professional Header**: Gradient logo with navigation and user profile
+- **Glass Morphism**: Modern backdrop blur effects in header
+- **Interactive Cards**: Hover effects and smooth transitions
+- **Professional Dashboard**: Feature showcase with statistics and call-to-actions
+- **Gradient Branding**: Consistent gradient theme throughout the application
+- **Badge System**: Status indicators and counters throughout the interface
+- **Empty States**: Helpful empty state messages with action buttons
 
 ## Technical Architecture
 
@@ -93,12 +125,60 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Local State**: React hooks for component-level state
 - **Server State**: TanStack Query for API data caching
 - **Form State**: Controlled components with validation
+- **Theme State**: Persistent theme management with localStorage
+- **Assessment State**: Complex form state management with validation
+- **Timeline State**: Event history management and display
+- **Drag State**: Optimistic updates for drag-and-drop operations
 
 ### Development Tools
 - **ESLint**: Code quality and consistency
 - **TypeScript**: Static type checking
 - **Vite**: Development server with hot reload
 - **Component Tagger**: Development-time component identification
+- **Custom Hooks**: Theme management with useTheme hook for state persistence
+- **DnD Kit**: Advanced drag-and-drop functionality
+- **Radix UI**: Accessible component primitives
+- **Lucide Icons**: Professional icon library
+- **React Router**: Client-side routing with URL state management
+
+## Component Architecture
+
+### Layout Components
+- **Header**: Professional navigation with theme toggle and user profile
+- **Layout**: Main application wrapper with consistent spacing
+
+### Feature Components
+- **JobsBoard**: Main jobs management interface with drag-and-drop
+- **JobCard**: Individual job display with actions and status
+- **JobModal**: Create/edit job form modal with validation
+- **JobDetail**: Detailed job view with candidate information
+- **CandidatesBoard**: Kanban-style candidate management
+- **CandidateCard**: Individual candidate display with stage indicators
+- **CandidateProfile**: Comprehensive candidate detail view
+- **CandidatesKanban**: Drag-and-drop stage management
+- **AssessmentsBoard**: Assessment management interface
+- **AssessmentBuilder**: Visual form builder with sections
+- **AssessmentPreview**: Real-time assessment preview
+- **AssessmentAnalysis**: Performance analytics dashboard
+- **AssessmentResponseViewer**: Detailed response analysis
+- **AssignmentManager**: Bulk candidate assignment interface
+- **CandidateAssessmentForm**: Timed assessment interface
+- **QuestionBuilder**: Individual question configuration
+- **NotesSection**: Rich notes with @mention support
+- **TimelineSection**: Chronological event display
+
+### UI Components
+- **Button**: Multiple variants with consistent styling
+- **Card**: Elevated content containers with hover effects
+- **Input/Textarea**: Form input components with validation
+- **Select**: Dropdown selection component
+- **Badge**: Status and tag indicators with color coding
+- **Skeleton**: Loading state placeholders
+- **Toast**: Notification system with variants
+- **Progress**: Progress bars and completion indicators
+- **Checkbox/Radio**: Form selection components
+- **Dialog**: Modal dialog system
+- **Tooltip**: Contextual help system
 
 ## Data Models
 
@@ -328,6 +408,36 @@ Create or update assessment for a job.
 
 **Response:** `Assessment`
 
+### Advanced Features
+
+#### Assessment Analytics
+- **Job-based Analytics**: Performance tracking per job position
+- **Completion Rates**: Assessment completion percentage tracking
+- **Status Distribution**: Sent, completed, and failed assessment tracking
+- **Progress Visualization**: Visual progress bars and completion metrics
+- **Real-time Updates**: Live analytics updates as assessments are completed
+
+#### Timeline System
+- **Event Types**: Stage changes, notes, assessments, interviews
+- **Chronological Display**: Time-ordered event history
+- **Event Metadata**: Detailed information for each timeline entry
+- **Relative Time**: Human-readable time formatting ("2h ago", "3d ago")
+- **Visual Timeline**: Professional timeline design with icons and colors
+
+#### Notes & Mentions
+- **@Mention Autocomplete**: Team member suggestion dropdown
+- **Rich Text Notes**: Formatted notes with mention highlighting
+- **Team Directory**: Predefined team members with roles
+- **Note History**: Chronological note display with timestamps
+- **Mention Rendering**: Visual badges for mentioned team members
+
+#### Theme System
+- **System Detection**: Automatic dark/light mode detection
+- **Manual Toggle**: Header-based theme switching
+- **Persistence**: LocalStorage-based theme preference
+- **Consistent Colors**: Theme-aware color schemes throughout
+- **Smooth Transitions**: Animated theme switching
+
 ### Data Models
 
 #### Job Entity
@@ -423,6 +533,10 @@ All API responses follow a consistent error format:
 - **Optimistic Updates**: Immediate UI feedback with rollback capability
 - **Code Splitting**: Route-based lazy loading
 - **Bundle Optimization**: Tree shaking and minification
+- **Drag & Drop Optimization**: Efficient reordering with conflict prevention
+- **Bulk Operations**: Efficient multi-candidate operations
+- **Memoized Components**: React.memo and useMemo for performance
+- **Lazy Loading**: Component-level lazy loading for better performance
 
 ### User Experience
 - **Progressive Enhancement**: Works without JavaScript for basic functionality
@@ -430,6 +544,11 @@ All API responses follow a consistent error format:
 - **Responsive Design**: Mobile-first with touch-friendly interactions
 - **Accessibility**: Screen reader support and keyboard navigation
 - **Loading States**: Skeleton loaders prevent layout shift
+- **Professional Branding**: Consistent gradient theme and typography
+- **Interactive Elements**: Hover effects and smooth animations
+- **Contextual Navigation**: Breadcrumbs and back navigation
+- **Status Indicators**: Visual feedback for all system states
+- **Error Recovery**: Graceful error handling with user guidance
 
 ## Design System
 
@@ -488,6 +607,13 @@ All API responses follow a consistent error format:
 - **Preview Mode**: Real-time assessment preview
 - **Job-Specific Assignment**: Assessments only sent to candidates who applied for that job
 - **Response Tracking**: Monitor completion rates and responses
+- **Timed Assessments**: Configurable time limits with countdown timer
+- **Multi-Section Forms**: Organized question sections with progress tracking
+- **Validation Engine**: Comprehensive client-side validation
+- **Response Viewer**: Detailed assessment response analysis
+- **Assignment Manager**: Bulk candidate assignment with status tracking
+- **Assessment Analytics**: Performance metrics and completion rates
+- **Runtime Management**: Active assessment sessions with time tracking
 
 ## Known Issues & Limitations
 
@@ -496,7 +622,10 @@ All API responses follow a consistent error format:
 - **Mock Backend**: Uses MirageJS instead of real backend (production-ready)
 - **Limited File Upload**: File upload questions are UI-only
 - **No Email Integration**: Assessment assignments are manual
-- **No Reporting**: Analytics are basic counts only
+- **Basic Reporting**: Analytics are counts and percentages only
+- **No Real-time Collaboration**: Single-user editing sessions
+- **Mock Timeline**: Timeline entries are generated, not real interactions
+- **Static Team Members**: @mention system uses predefined team list
 
 ### Future Enhancements
 - **Multi-tenant Support**: Organization and user management
@@ -505,6 +634,12 @@ All API responses follow a consistent error format:
 - **Integration APIs**: Connect with external HR systems
 - **Mobile App**: Native mobile application
 - **Real-time Collaboration**: Multi-user editing and notifications
+- **Video Interviews**: Integrated video calling system
+- **AI-Powered Matching**: Candidate-job matching algorithms
+- **Advanced Reporting**: Custom report builder
+- **Calendar Integration**: Interview scheduling system
+- **Document Management**: Resume parsing and storage
+- **Workflow Automation**: Automated hiring workflows
 
 ## Testing Strategy
 

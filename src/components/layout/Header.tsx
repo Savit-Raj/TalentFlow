@@ -10,9 +10,14 @@
  */
 
 import { NavLink } from 'react-router-dom';
-import { Briefcase, Users, ClipboardList, Building } from 'lucide-react';
+import { Briefcase, Users, ClipboardList, Building, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/hooks/use-theme';
+import buttonExports from '@/components/ui/button';
+const { Button } = buttonExports;
 
 const Header = () => {
+  const { theme, toggleTheme } = useTheme();
+  
   const navItems = [
     { to: '/jobs', label: 'Jobs', icon: Briefcase },
     { to: '/candidates', label: 'Candidates', icon: Users },
@@ -54,8 +59,21 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* User Profile (Placeholder) */}
+        {/* Theme Toggle & User Profile */}
         <div className="flex items-center space-x-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            className="h-8 w-8 p-0"
+          >
+            {theme === 'light' ? (
+              <Moon className="h-4 w-4" />
+            ) : (
+              <Sun className="h-4 w-4" />
+            )}
+          </Button>
+          
           <div className="h-8 w-8 bg-gradient-primary rounded-full flex items-center justify-center">
             <span className="text-sm font-semibold text-white">HR</span>
           </div>

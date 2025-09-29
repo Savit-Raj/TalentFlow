@@ -244,7 +244,7 @@ const CandidatesKanban = ({ candidates, onStageUpdate, onCandidateClick }: Candi
             <DroppableStageColumn key={stage} stage={stage} config={config}>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-semibold flex items-center justify-between">
-                  <span>{config.title}</span>
+                  <span className="text-slate-700">{config.title}</span>
                   <Badge variant="secondary" className="text-xs">
                     {stageCandidates.length}
                   </Badge>
