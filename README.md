@@ -5,6 +5,12 @@
 
 A comprehensive, modern hiring platform built with React, TypeScript, and advanced web technologies. TalentFlow streamlines the entire recruitment process from job posting to candidate management and assessment creation.
 
+## Intresting Sections to have a look at
+- [Design & Prototype](#design--prototype)
+- [Core Features](#core-features)
+- [Data Models](#Data-Models)
+- [API Documentation](#API-Documentation)
+
 ## Design & Prototype
 
 **Figma Design Canvas:** https://www.figma.com/design/BKHwqMfsJlh0adLb3fdMHL/Untitled?node-id=0-1&t=GW5hvJammrohw8wF-1  
@@ -52,6 +58,7 @@ Access the application at `https://talentflowsavit.vercel.app/`
 ### Candidate Pipeline
 - **1000+ Candidate Management**: Efficient handling of large candidate pools
 - **Kanban Board**: Visual drag-and-drop stage management
+- **Drag and Drop**: Drag and Drop only works if the name is searched to avoid random allocations.
 - **6-Stage Pipeline**: Applied → Screening → Technical → Offer → Hired → Rejected
 - **Advanced Search**: Real-time filtering by name and email
 - **Stage Analytics**: Live counts for each pipeline stage
@@ -122,16 +129,6 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Optimistic Updates**: Immediate UI feedback with error rollback
 - **Data Validation**: Client-side validation with error handling
 - **Relationship Management**: Foreign key integrity across entities
-
-### State Management
-- **URL State**: Search params for filters and pagination
-- **Local State**: React hooks for component-level state
-- **Server State**: TanStack Query for API data caching
-- **Form State**: Controlled components with validation
-- **Theme State**: Persistent theme management with localStorage
-- **Assessment State**: Complex form state management with validation
-- **Timeline State**: Event history management and display
-- **Drag State**: Optimistic updates for drag-and-drop operations
 
 ### Development Tools
 - **ESLint**: Code quality and consistency
@@ -237,21 +234,6 @@ interface Assessment {
   updatedAt: Date;
 }
 ```
-
-## Key Technical Decisions
-
-### Database Architecture
-- **IndexedDB over LocalStorage**: Handles large datasets (1000+ candidates) efficiently
-- **Dexie Wrapper**: Provides Promise-based API with TypeScript support
-- **Automatic Timestamps**: Database hooks ensure data integrity
-- **Relationship Integrity**: Foreign key validation prevents orphaned records
-
-### API Design
-- **MirageJS Mock Server**: Production-ready mock API with network latency simulation
-- **RESTful Endpoints**: Standard HTTP methods with proper status codes
-- **Pagination Support**: Server-side pagination with metadata
-- **Error Simulation**: Random 5-10% error rate for robust error handling
-- **Data Caching**: In-memory cache to reduce IndexedDB calls
 
 ## API Documentation
 
@@ -441,61 +423,6 @@ Create or update assessment for a job.
 - **Consistent Colors**: Theme-aware color schemes throughout
 - **Smooth Transitions**: Animated theme switching
 
-### Data Models
-
-#### Job Entity
-```typescript
-interface Job {
-  id: string;
-  jobNumber: string;        // 5-digit identifier (10001-10025)
-  title: string;
-  description: string;
-  slug: string;
-  status: 'active' | 'archived';
-  tags: string[];
-  order: number;           // For drag-and-drop ordering
-  requirements?: string[];
-  location?: string;
-  type?: 'full-time' | 'part-time' | 'contract' | 'internship';
-  salary?: { min: number; max: number; currency: string; };
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-
-#### Candidate Entity
-```typescript
-interface Candidate {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  stage: 'applied' | 'screen' | 'tech' | 'offer' | 'hired' | 'rejected';
-  jobId: string;           // Links to specific job
-  skills?: string[];
-  experience?: number;
-  education?: string;
-  location?: string;
-  notes: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-
-#### Assessment Entity
-```typescript
-interface Assessment {
-  id: string;
-  jobId: string;           // Links to specific job
-  title: string;
-  description?: string;
-  sections: AssessmentSection[];
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-
 ### Error Handling
 
 All API responses follow a consistent error format:
@@ -551,6 +478,21 @@ All API responses follow a consistent error format:
 - **Contextual Navigation**: Breadcrumbs and back navigation
 - **Status Indicators**: Visual feedback for all system states
 - **Error Recovery**: Graceful error handling with user guidance
+
+## Key Technical Decisions
+
+### Database Architecture
+- **IndexedDB over LocalStorage**: Handles large datasets (1000+ candidates) efficiently
+- **Dexie Wrapper**: Provides Promise-based API with TypeScript support
+- **Automatic Timestamps**: Database hooks ensure data integrity
+- **Relationship Integrity**: Foreign key validation prevents orphaned records
+
+### API Design
+- **MirageJS Mock Server**: Production-ready mock API with network latency simulation
+- **RESTful Endpoints**: Standard HTTP methods with proper status codes
+- **Pagination Support**: Server-side pagination with metadata
+- **Error Simulation**: Random 5-10% error rate for robust error handling
+- **Data Caching**: In-memory cache to reduce IndexedDB calls
 
 ## Design System
 
@@ -608,40 +550,6 @@ All API responses follow a consistent error format:
 - **Tablet**: 768px - 1023px
 - **Desktop**: 1024px - 1279px
 - **Large Desktop**: 1280px+
-
-## Feature Deep Dive
-
-### Jobs Board
-- **Drag & Drop**: Reorder jobs with visual feedback and optimistic updates
-- **Search**: Real-time search across job titles and tags
-- **Filtering**: Status-based filtering (active/archived)
-- **Sorting**: Order by creation date or custom order
-- **Pagination**: Server-side pagination with URL state
-- **CRUD Operations**: Create, read, update, archive jobs
-
-### Candidate Management
-- **Pipeline Visualization**: Kanban board with 6 stages
-- **Job Relationship**: Each candidate linked to specific job with job number display
-- **Bulk Operations**: Multi-select for stage updates
-- **Search & Filter**: Real-time filtering by name, email, stage
-- **Profile Management**: Detailed candidate profiles with timeline
-- **Notes System**: Rich text notes with @mention support
-- **Analytics**: Stage distribution and conversion metrics
-
-### Assessment System
-- **Visual Builder**: Drag-and-drop question arrangement
-- **Question Types**: 6 different input types with validation
-- **Conditional Logic**: Dynamic form behavior based on responses
-- **Preview Mode**: Real-time assessment preview
-- **Job-Specific Assignment**: Assessments only sent to candidates who applied for that job
-- **Response Tracking**: Monitor completion rates and responses
-- **Timed Assessments**: Configurable time limits with countdown timer
-- **Multi-Section Forms**: Organized question sections with progress tracking
-- **Validation Engine**: Comprehensive client-side validation
-- **Response Viewer**: Detailed assessment response analysis
-- **Assignment Manager**: Bulk candidate assignment with status tracking
-- **Assessment Analytics**: Performance metrics and completion rates
-- **Runtime Management**: Active assessment sessions with time tracking
 
 ## Known Issues & Limitations
 
