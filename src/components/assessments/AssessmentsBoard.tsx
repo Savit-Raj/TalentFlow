@@ -121,39 +121,43 @@ const AssessmentsBoard = () => {
       {selectedJobId && (
         <>
           {/* Tab Navigation */}
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={activeTab === 'builder' ? 'default' : 'outline'}
               onClick={() => setActiveTab('builder')}
+              className="flex-1 sm:flex-none"
             >
-              <Settings className="mr-2 h-4 w-4" />
-              Builder
+              <Settings className="mr-1 sm:mr-2 h-4 w-4" />
+              <span className="hidden xs:inline">Builder</span>
             </Button>
             <Button
               variant={activeTab === 'preview' ? 'default' : 'outline'}
               onClick={() => setActiveTab('preview')}
               disabled={!assessment || assessment.sections.length === 0}
+              className="flex-1 sm:flex-none"
             >
-              <Eye className="mr-2 h-4 w-4" />
-              Preview
+              <Eye className="mr-1 sm:mr-2 h-4 w-4" />
+              <span className="hidden xs:inline">Preview</span>
             </Button>
             <Button
               variant={activeTab === 'assignments' ? 'default' : 'outline'}
               onClick={() => setActiveTab('assignments')}
               disabled={!assessment || assessment.sections.length === 0}
+              className="flex-1 sm:flex-none"
             >
-              <Plus className="mr-2 h-4 w-4" />
-              Assignments
+              <Plus className="mr-1 sm:mr-2 h-4 w-4" />
+              <span className="hidden xs:inline">Assignments</span>
               {assessment && !assessment.isActive && (
-                <span className="ml-1 text-xs bg-yellow-500 text-white px-1 rounded">Inactive</span>
+                <span className="ml-1 text-xs bg-yellow-500 text-white px-1 rounded hidden sm:inline">Inactive</span>
               )}
             </Button>
             <Button
               variant={activeTab === 'analysis' ? 'default' : 'outline'}
               onClick={() => setActiveTab('analysis')}
+              className="flex-1 sm:flex-none"
             >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Analysis
+              <BarChart3 className="mr-1 sm:mr-2 h-4 w-4" />
+              <span className="hidden xs:inline">Analysis</span>
             </Button>
           </div>
 

@@ -46,14 +46,14 @@ const QuestionBuilder = ({ question, onUpdate, onDelete }: QuestionBuilderProps)
     <Card className="border-l-4 border-l-primary/20">
       <CardContent className="p-4 space-y-4">
         {/* Question Header */}
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-2 sm:space-y-0">
           <div className="flex-1 space-y-2">
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
               <Select
                 value={question.type}
                 onValueChange={(value) => onUpdate({ type: value as Question['type'] })}
               >
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -75,7 +75,7 @@ const QuestionBuilder = ({ question, onUpdate, onDelete }: QuestionBuilderProps)
               </div>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={onDelete}>
+          <Button variant="outline" size="sm" onClick={onDelete} className="self-center sm:self-start">
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>

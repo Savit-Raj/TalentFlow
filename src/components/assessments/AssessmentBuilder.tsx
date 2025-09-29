@@ -43,8 +43,8 @@ const SortableSection = ({ section, onUpdate, onDelete, onQuestionUpdate, onQues
     <div ref={setNodeRef} style={style}>
       <Card>
         <CardHeader>
-          <div className="flex items-center space-x-2">
-            <div {...attributes} {...listeners} className="cursor-grab">
+          <div className="flex flex-col sm:flex-row sm:items-start space-y-2 sm:space-y-0 sm:space-x-2">
+            <div {...attributes} {...listeners} className="cursor-grab self-center sm:self-start">
               <GripVertical className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="flex-1 space-y-2">
@@ -65,6 +65,7 @@ const SortableSection = ({ section, onUpdate, onDelete, onQuestionUpdate, onQues
               variant="outline"
               size="sm"
               onClick={() => onDelete(section.id)}
+              className="self-center sm:self-start"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
