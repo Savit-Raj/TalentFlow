@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ClipboardList, Plus, Eye, Settings } from 'lucide-react';
+import { ClipboardList, Plus, Eye, Settings, BarChart3 } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import AssessmentBuilder from './AssessmentBuilder';
 import AssessmentPreview from './AssessmentPreview';
 import AssignmentManager from './AssignmentManager';
+import AssessmentAnalysis from './AssessmentAnalysis';
 import { JobsApi, AssessmentsApi } from '@/lib/api';
 import type { Job, Assessment } from '@/lib/database';
 
@@ -18,7 +19,7 @@ const AssessmentsBoard = () => {
   const [selectedJobId, setSelectedJobId] = useState<string>('');
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'builder' | 'preview' | 'assignments'>('builder');
+  const [activeTab, setActiveTab] = useState<'builder' | 'preview' | 'assignments' | 'analysis'>('builder');
   const [isAssessmentSent, setIsAssessmentSent] = useState(false);
   const [timerState, setTimerState] = useState<{ timeRemaining: number; isTimeUp: boolean; isSubmitted: boolean }>({ timeRemaining: 120, isTimeUp: false, isSubmitted: false });
 
@@ -143,6 +144,16 @@ const AssessmentsBoard = () => {
             >
               <Plus className="mr-2 h-4 w-4" />
               Assignments
+              {assessment && !assessment.isActive && (
+                <span className="ml-1 text-xs bg-yellow-500 text-white px-1 rounded">Inactive</span>
+              )}
+            </Button>
+            <Button
+              variant={activeTab === 'analysis' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('analysis')}
+            >
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Analysis
             </Button>
           </div>
 
@@ -174,6 +185,10 @@ const AssessmentsBoard = () => {
                 setTimerState({ timeRemaining: 120, isTimeUp: false, isSubmitted: false });
               }}
             />
+          )}
+
+          {activeTab === 'analysis' && (
+            <AssessmentAnalysis />
           )}
         </>
       )}

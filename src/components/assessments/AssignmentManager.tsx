@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Users, Send, CheckCircle, Clock, Timer } from 'lucide-react';
+import { Users, Send, CheckCircle, Clock, Timer, AlertTriangle } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -155,6 +155,23 @@ const AssignmentManager = ({ jobId, assessment, onAssessmentSent }: AssignmentMa
 
   return (
     <div className="space-y-6">
+      {/* Assessment Inactive Warning */}
+      {!assessment.isActive && (
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              <div>
+                <h3 className="font-semibold text-yellow-800">Assessment Inactive</h3>
+                <p className="text-sm text-yellow-700">
+                  This assessment is currently inactive. Enable it in the Builder tab to send to candidates.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Assessment Runtime Status */}
       {assessmentRuntime.isActive && (
         <Card className="border-orange-200 bg-orange-50">
@@ -203,6 +220,7 @@ const AssignmentManager = ({ jobId, assessment, onAssessmentSent }: AssignmentMa
                 <Checkbox
                   checked={selectedCandidates.size === pendingCandidates.length && pendingCandidates.length > 0}
                   onCheckedChange={handleSelectAll}
+                  disabled={!assessment.isActive}
                 />
                 <span className="text-sm">
                   Select all pending candidates ({pendingCandidates.length})
@@ -210,7 +228,7 @@ const AssignmentManager = ({ jobId, assessment, onAssessmentSent }: AssignmentMa
               </div>
               <Button
                 onClick={handleSendAssessments}
-                disabled={selectedCandidates.size === 0 || isLoading}
+                disabled={selectedCandidates.size === 0 || isLoading || !assessment.isActive}
               >
                 <Send className="mr-2 h-4 w-4" />
                 Send to {selectedCandidates.size} candidate(s)
@@ -251,6 +269,7 @@ const AssignmentManager = ({ jobId, assessment, onAssessmentSent }: AssignmentMa
                           onCheckedChange={(checked) => 
                             handleSelectCandidate(candidate.id, checked as boolean)
                           }
+                          disabled={!assessment.isActive}
                         />
                       )}
                       <div className="flex-1">

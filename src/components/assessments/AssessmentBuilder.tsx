@@ -98,14 +98,24 @@ const AssessmentBuilder = ({ job, assessment, onSave, isLoading }: AssessmentBui
   const [description, setDescription] = useState(assessment?.description || '');
   const [sections, setSections] = useState<AssessmentSection[]>(assessment?.sections || []);
   const [isActive, setIsActive] = useState(assessment?.isActive !== false);
+  const [lastAssessmentId, setLastAssessmentId] = useState<string | null>(null);
 
-  // Reset state when assessment changes
+  // Reset state only when switching to a different assessment
   useEffect(() => {
-    setTitle(assessment?.title || `${job.title} Assessment`);
-    setDescription(assessment?.description || '');
-    setSections(assessment?.sections || []);
-    setIsActive(assessment?.isActive !== false);
-  }, [assessment, job.title]);
+    if (assessment && assessment.id !== lastAssessmentId) {
+      setTitle(assessment.title || `${job.title} Assessment`);
+      setDescription(assessment.description || '');
+      setSections(assessment.sections || []);
+      setIsActive(assessment.isActive !== false);
+      setLastAssessmentId(assessment.id);
+    } else if (!assessment) {
+      setTitle(`${job.title} Assessment`);
+      setDescription('');
+      setSections([]);
+      setIsActive(true);
+      setLastAssessmentId(null);
+    }
+  }, [assessment, job.title, lastAssessmentId]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -194,6 +204,19 @@ const AssessmentBuilder = ({ job, assessment, onSave, isLoading }: AssessmentBui
     };
     onSave(assessmentData);
   }, [title, description, sections, isActive, onSave]);
+
+  // Auto-save when isActive changes
+  useEffect(() => {
+    if (assessment && assessment.id === lastAssessmentId) {
+      const assessmentData: Partial<Assessment> = {
+        title,
+        description,
+        sections,
+        isActive,
+      };
+      onSave(assessmentData);
+    }
+  }, [isActive]);
 
   return (
     <div className="space-y-6">
