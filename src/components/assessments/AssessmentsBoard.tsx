@@ -128,7 +128,7 @@ const AssessmentsBoard = () => {
               className="flex-1 sm:flex-none"
             >
               <Settings className="mr-1 sm:mr-2 h-4 w-4" />
-              <span className="hidden xs:inline">Builder</span>
+              <span className="xs:inline">Builder</span>
             </Button>
             <Button
               variant={activeTab === 'preview' ? 'default' : 'outline'}
@@ -137,7 +137,7 @@ const AssessmentsBoard = () => {
               className="flex-1 sm:flex-none"
             >
               <Eye className="mr-1 sm:mr-2 h-4 w-4" />
-              <span className="hidden xs:inline">Preview</span>
+              <span className="xs:inline">Preview</span>
             </Button>
             <Button
               variant={activeTab === 'assignments' ? 'default' : 'outline'}
@@ -146,7 +146,7 @@ const AssessmentsBoard = () => {
               className="flex-1 sm:flex-none"
             >
               <Plus className="mr-1 sm:mr-2 h-4 w-4" />
-              <span className="hidden xs:inline">Assignments</span>
+              <span className="xs:inline">Assignments</span>
               {assessment && !assessment.isActive && (
                 <span className="ml-1 text-xs bg-yellow-500 text-white px-1 rounded hidden sm:inline">Inactive</span>
               )}
@@ -157,7 +157,7 @@ const AssessmentsBoard = () => {
               className="flex-1 sm:flex-none"
             >
               <BarChart3 className="mr-1 sm:mr-2 h-4 w-4" />
-              <span className="hidden xs:inline">Analysis</span>
+              <span className="xs:inline">Analysis</span>
             </Button>
           </div>
 
