@@ -5,7 +5,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Edit, Archive, RotateCcw } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Edit, Archive, RotateCcw, Users } from 'lucide-react';
+import { useCandidateCount } from '@/hooks/use-candidate-count';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +27,7 @@ const JobDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
+  const { count: candidateCount } = useCandidateCount(job?.id || '');
 
   // Fetch job data
   useEffect(() => {
@@ -225,6 +227,11 @@ const JobDetail = () => {
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4" />
               <span>Posted {job.createdAt.toLocaleDateString()}</span>
+            </div>
+            
+            <div className="flex items-center space-x-1">
+              <Users className="h-4 w-4" />
+              <span>{candidateCount} candidate{candidateCount !== 1 ? 's' : ''} applied</span>
             </div>
             
             {job.type && (

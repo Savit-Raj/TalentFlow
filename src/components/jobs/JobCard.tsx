@@ -13,7 +13,8 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MoreHorizontal, MapPin, Edit, Archive, RotateCcw, GripVertical } from 'lucide-react';
+import { MoreHorizontal, MapPin, Edit, Archive, RotateCcw, GripVertical, Users } from 'lucide-react';
+import { useCandidateCount } from '@/hooks/use-candidate-count';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Badge } from '../ui/badge';
@@ -39,6 +40,7 @@ const JobCard = ({ job, onEdit, onArchive, onUnarchive, isDragging }: JobCardPro
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { count: candidateCount } = useCandidateCount(job.id);
 
   const handleArchive = async () => {
     setIsLoading(true);
@@ -204,9 +206,13 @@ const JobCard = ({ job, onEdit, onArchive, onUnarchive, isDragging }: JobCardPro
           </div>
         </div>
 
-        {/* Creation Date */}
-        <div className="text-xs text-muted-foreground">
-          Created {job.createdAt.toLocaleDateString()}
+        {/* Creation Date and Candidate Count */}
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>Created {job.createdAt.toLocaleDateString()}</span>
+          <div className="flex items-center space-x-1">
+            <Users className="h-3 w-3" />
+            <span>{candidateCount} candidate{candidateCount !== 1 ? 's' : ''}</span>
+          </div>
         </div>
       </CardContent>
     </Card>

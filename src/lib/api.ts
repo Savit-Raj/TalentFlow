@@ -160,6 +160,10 @@ class ApiClient {
     });
   }
 
+  async getCandidateCount(jobId: string): Promise<ApiResult<{ count: number }>> {
+    return this.request<{ count: number }>(`/jobs/${jobId}/candidates/count`);
+  }
+
   // Candidates API
   async getCandidates(params: {
     search?: string;
@@ -233,6 +237,7 @@ export const JobsApi = {
   createJob: apiClient.createJob.bind(apiClient),
   updateJob: apiClient.updateJob.bind(apiClient),
   reorderJob: apiClient.reorderJob.bind(apiClient),
+  getCandidateCount: apiClient.getCandidateCount.bind(apiClient),
 };
 
 export const CandidatesApi = {

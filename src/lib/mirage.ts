@@ -157,6 +157,16 @@ export function makeServer({ environment = 'development' } = {}) {
         }
       });
 
+      this.get('/jobs/:jobId/candidates/count', async (_schema, request) => {
+        try {
+          const data = await loadData();
+          const count = data.candidates.filter(c => c.jobId === request.params.jobId).length;
+          return { count };
+        } catch {
+          return new Response(500, {}, { error: 'Database error' });
+        }
+      });
+
       this.post('/jobs', async (_schema, request) => {
         try {
           await simulateWriteOperation();

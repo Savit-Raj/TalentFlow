@@ -352,7 +352,7 @@ const JobsBoard = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Jobs Board</h1>
-          <p className="text-muted-foreground">Manage your job postings and track applications</p>
+          <p className="text-muted-foreground">Manage your job postings</p>
         </div>
         <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
