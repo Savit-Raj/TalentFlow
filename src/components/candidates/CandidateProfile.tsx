@@ -331,7 +331,7 @@ const CandidateProfile = () => {
                 
                 <div className="flex items-center space-x-2">
                   <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{candidate.platform}</span>
+                  <span className="text-sm">Applied via {candidate.platform}</span>
                 </div>
               </div>
 

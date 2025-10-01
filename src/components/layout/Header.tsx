@@ -10,13 +10,15 @@
  */
 
 import { NavLink } from 'react-router-dom';
-import { Briefcase, Users, ClipboardList, Building, Sun, Moon } from 'lucide-react';
+import { Briefcase, Users, ClipboardList, Building, Sun, Moon, LogOut } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
+import { useAuth } from '@/hooks/use-auth';
 import buttonExports from '@/components/ui/button';
 const { Button } = buttonExports;
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
+  const { logout } = useAuth();
   
   const navItems = [
     { to: '/jobs', label: 'Jobs', icon: Briefcase },
@@ -72,6 +74,16 @@ const Header = () => {
             ) : (
               <Sun className="h-4 w-4" />
             )}
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            className="h-8 w-8 p-0"
+            title="Logout"
+          >
+            <LogOut className="h-4 w-4" />
           </Button>
           
           <div className="h-8 w-8 bg-gradient-primary rounded-full flex items-center justify-center">

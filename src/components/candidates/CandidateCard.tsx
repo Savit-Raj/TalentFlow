@@ -144,7 +144,7 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
                 {/* Platform Information */}
                 <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                   <ExternalLink className="h-3 w-3" />
-                  <span>{candidate.platform}</span>
+                  <span>Applied via {candidate.platform}</span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-sm text-muted-foreground">
