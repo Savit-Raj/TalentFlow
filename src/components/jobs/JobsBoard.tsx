@@ -248,27 +248,47 @@ const JobsBoard = () => {
 
   // Handle job archiving
   const handleArchive = useCallback(async (jobId: string) => {
+    // Optimistic update
+    const originalJobs = jobs;
+    setJobs(prev => prev.map(job => 
+      job.id === jobId ? { ...job, status: 'archived' as const } : job
+    ));
+
     try {
       const result = await JobsApi.updateJob(jobId, { status: 'archived' });
-      if (result.error) throw new Error(result.error.message);
-
-      fetchJobs(); // Refresh the list
+      if (result.error) {
+        // Rollback on failure
+        setJobs(originalJobs);
+        throw new Error(result.error.message);
+      }
     } catch (error: unknown) {
+      // Rollback on failure
+      setJobs(originalJobs);
       throw new Error(error instanceof Error ? error.message : 'Unknown error');
     }
-  }, [fetchJobs]);
+  }, [jobs]);
 
   // Handle job unarchiving
   const handleUnarchive = useCallback(async (jobId: string) => {
+    // Optimistic update
+    const originalJobs = jobs;
+    setJobs(prev => prev.map(job => 
+      job.id === jobId ? { ...job, status: 'active' as const } : job
+    ));
+
     try {
       const result = await JobsApi.updateJob(jobId, { status: 'active' });
-      if (result.error) throw new Error(result.error.message);
-
-      fetchJobs(); // Refresh the list
+      if (result.error) {
+        // Rollback on failure
+        setJobs(originalJobs);
+        throw new Error(result.error.message);
+      }
     } catch (error: unknown) {
+      // Rollback on failure
+      setJobs(originalJobs);
       throw new Error(error instanceof Error ? error.message : 'Unknown error');
     }
-  }, [fetchJobs]);
+  }, [jobs]);
 
   // Handle drag and drop reordering
   const handleDragEnd = useCallback(async (event: DragEndEvent) => {

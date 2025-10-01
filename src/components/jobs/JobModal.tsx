@@ -65,35 +65,32 @@ const JobModal = ({ isOpen, onClose, onSave, job }: JobModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load job data when editing
+  // Load job data when editing or reset when modal opens/closes
   useEffect(() => {
-    if (job) {
-      setFormData({
-        title: job.title,
-        description: job.description,
-        location: job.location || '',
-        type: job.type || 'full-time',
-        status: job.status,
-        tags: [...job.tags],
-        requirements: [...(job.requirements || [])],
-        salaryMin: job.salary?.min.toString() || '',
-        salaryMax: job.salary?.max.toString() || '',
-        salaryCurrency: job.salary?.currency || 'USD',
-      });
+    if (isOpen) {
+      if (job) {
+        setFormData({
+          title: job.title,
+          description: job.description,
+          location: job.location || '',
+          type: job.type || 'full-time',
+          status: job.status,
+          tags: [...job.tags],
+          requirements: [...(job.requirements || [])],
+          salaryMin: job.salary?.min.toString() || '',
+          salaryMax: job.salary?.max.toString() || '',
+          salaryCurrency: job.salary?.currency || 'USD',
+        });
+      } else {
+        setFormData(initialFormData);
+      }
     } else {
-      setFormData(initialFormData);
-    }
-  }, [job]);
-
-  // Reset form when modal closes
-  useEffect(() => {
-    if (!isOpen) {
       setFormData(initialFormData);
       setNewTag('');
       setNewRequirement('');
       setErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, job]);
 
   // Form validation
   const validateForm = (): boolean => {
