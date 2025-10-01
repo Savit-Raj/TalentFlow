@@ -41,6 +41,7 @@ export interface Candidate {
   phone?: string;
   stage: 'applied' | 'screen' | 'tech' | 'offer' | 'hired' | 'rejected';
   jobId: string;
+  platform: 'Indeed' | 'LinkedIn' | 'Glassdoor' | 'AngelList' | 'Company Website';
   resumeUrl?: string;
   notes: string[];
   createdAt: Date;
@@ -127,7 +128,7 @@ class TalentFlowDatabase extends Dexie {
     super('TalentFlowDB');
     
     // Define schemas and indexes for efficient querying
-    this.version(2).stores({
+    this.version(3).stores({
       jobs: '++id, jobNumber, title, status, slug, order, createdAt',
       candidates: '++id, name, email, stage, jobId, createdAt',
       assessments: '++id, jobId, title, isActive, createdAt',

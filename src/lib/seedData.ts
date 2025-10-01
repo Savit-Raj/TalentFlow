@@ -59,6 +59,8 @@ const educationLevels = [
   'PhD in Computer Science', 'Bachelor\'s in Engineering', 'Master\'s in Data Science', 'Bootcamp Graduate'
 ];
 
+const platforms = ['Company Website', 'LinkedIn', 'Glassdoor', 'College Drive', 'Referral'];
+
 /**
  * Utility Functions for Data Generation
  */
@@ -183,6 +185,7 @@ const generateCandidates = (jobs: Job[]): Candidate[] => {
       phone: `+1${Math.floor(Math.random() * 9000000000) + 1000000000}`,
       stage,
       jobId: job.id,
+      platform: getRandomItem(platforms) as Candidate['platform'],
       skills: getRandomItems(skills, Math.floor(Math.random() * 6) + 3),
       experience: Math.floor(Math.random() * 15) + 1,
       education: getRandomItem(educationLevels),
@@ -479,9 +482,11 @@ export const initializeDatabase = async (): Promise<void> => {
       console.log('🔧 Database is empty, seeding with initial data...');
       await seedDatabase();
     } else {
-      // Check if existing jobs have jobNumber field
+      // Check if existing data has required fields
       const firstJob = await db.jobs.orderBy('id').first();
-      if (firstJob && !firstJob.jobNumber) {
+      const firstCandidate = await db.candidates.orderBy('id').first();
+      
+      if ((firstJob && !firstJob.jobNumber) || (firstCandidate && !firstCandidate.platform)) {
         console.log('🔧 Schema changed, regenerating database...');
         await seedDatabase();
       } else {

@@ -11,7 +11,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { MoreHorizontal, Mail, Phone, MapPin, Briefcase, GraduationCap, Building2 } from 'lucide-react';
+import { MoreHorizontal, Mail, Phone, MapPin, Briefcase, GraduationCap, Building2, ExternalLink } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Badge } from '../ui/badge';
@@ -140,6 +140,12 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
                     <span className="truncate">{job.title}</span>
                   </div>
                 )}
+
+                {/* Platform Information */}
+                <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                  <ExternalLink className="h-3 w-3" />
+                  <span>{candidate.platform}</span>
+                </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-sm text-muted-foreground">
                   {candidate.location && (

@@ -11,7 +11,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Briefcase, GraduationCap, Calendar, Building2 } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, MapPin, Briefcase, GraduationCap, Calendar, Building2, ExternalLink } from 'lucide-react';
 
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
@@ -327,6 +327,11 @@ const CandidateProfile = () => {
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">Applied {candidate.createdAt.toLocaleDateString()}</span>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">{candidate.platform}</span>
                 </div>
               </div>
 
