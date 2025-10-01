@@ -25,8 +25,8 @@ import { useToast } from '@/hooks/use-toast';
 
 import CandidateCard from '@/components/candidates/CandidateCard';
 import CandidatesKanban from './CandidatesKanban';
-import { CandidatesApi } from '@/lib/api';
-import type { Candidate } from '@/lib/database';
+import { CandidatesApi, JobsApi } from '@/lib/api';
+import type { Candidate, Job } from '@/lib/database';
 
 
 const CandidatesBoard = () => {
@@ -36,6 +36,7 @@ const CandidatesBoard = () => {
 
   // State management
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('list');
@@ -61,24 +62,29 @@ const CandidatesBoard = () => {
     setSearchParams(newParams);
   }, [searchParams, setSearchParams]);
 
-  // Fetch candidates with pagination
-  const fetchCandidates = useCallback(async () => {
+  // Fetch candidates and jobs
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result = await CandidatesApi.getCandidates({
-        pageSize: 1000, // Get all for filtering
-      });
+      const [candidatesResult, jobsResult] = await Promise.all([
+        CandidatesApi.getCandidates({ pageSize: 1000 }),
+        JobsApi.getJobs({ pageSize: 1000 })
+      ]);
 
-      if (result.error) {
-        throw new Error(result.error.message);
+      if (candidatesResult.error) {
+        throw new Error(candidatesResult.error.message);
+      }
+      if (jobsResult.error) {
+        throw new Error(jobsResult.error.message);
       }
 
-      setCandidates(result.data.data);
+      setCandidates(candidatesResult.data.data);
+      setJobs(jobsResult.data.data);
     } catch (error) {
-      console.error('Error fetching candidates:', error);
+      console.error('Error fetching data:', error);
       toast({
         title: 'Error',
-        description: 'Failed to load candidates. Please try again.',
+        description: 'Failed to load data. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -91,12 +97,17 @@ const CandidatesBoard = () => {
     const validStages = ['applied', 'screen', 'tech', 'offer', 'hired', 'rejected'];
     let filtered = candidates.filter(candidate => validStages.includes(candidate.stage));
 
-    // Apply search filter (name or email)
+    // Apply search filter (name, email, job title, or job number)
     if (search) {
-      filtered = filtered.filter(candidate => 
-        candidate.name.toLowerCase().includes(search.toLowerCase()) ||
-        candidate.email.toLowerCase().includes(search.toLowerCase())
-      );
+      filtered = filtered.filter(candidate => {
+        const job = jobs.find(j => j.id === candidate.jobId);
+        return (
+          candidate.name.toLowerCase().includes(search.toLowerCase()) ||
+          candidate.email.toLowerCase().includes(search.toLowerCase()) ||
+          (job?.title.toLowerCase().includes(search.toLowerCase())) ||
+          (job?.jobNumber.toLowerCase().includes(search.toLowerCase()))
+        );
+      });
     }
 
     // Apply stage filter
@@ -105,12 +116,12 @@ const CandidatesBoard = () => {
     }
 
     setFilteredCandidates(filtered);
-  }, [candidates, search, stage]);
+  }, [candidates, jobs, search, stage]);
 
-  // Load candidates on mount
+  // Load data on mount
   useEffect(() => {
-    fetchCandidates();
-  }, [fetchCandidates]);
+    fetchData();
+  }, [fetchData]);
 
   // Handle search input
   const handleSearchChange = useCallback((value: string) => {
@@ -218,7 +229,7 @@ const CandidatesBoard = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name or email..."
+                  placeholder="Search by name, email, job title, or job number..."
                   value={search}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10"
