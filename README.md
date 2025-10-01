@@ -5,6 +5,10 @@
 
 A comprehensive, modern hiring platform built with React, TypeScript, and advanced web technologies. TalentFlow streamlines the entire recruitment process from job posting to candidate management and assessment creation.
 
+Login Credentials are on the login page also:
+Email: hr@talentflow.com
+Password: admin123
+
 ## Intresting Sections to have a look at
 - [Design & Prototype](#design--prototype)
 - [Core Features](#core-features)
@@ -93,6 +97,18 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Progress Tracking**: Real-time completion progress and analytics
 - **Status Management**: Draft, submitted, and reviewed status tracking
 
+### Authentication & Security
+- **Login System**: Secure authentication with hardcoded demo credentials
+- **Protected Routes**: Route-level authentication guards
+- **Session Management**: LocalStorage-based session persistence
+- **Auto-redirect**: Automatic redirection to login for unauthenticated users
+- **Logout Functionality**: One-click logout with session cleanup
+- **Loading States**: Authentication loading states with proper UX
+- **Demo Credentials Display**: Built-in credential display for easy access
+- **Password Visibility Toggle**: Eye/EyeOff icons for password field
+- **Form Validation**: Client-side validation with error feedback
+- **Professional Login UI**: Gradient-themed login page with branding
+
 ### Advanced UI/UX Features
 - **Responsive Design**: Mobile-first approach with breakpoint optimization
 - **Dark/Light Theme**: System preference detection with manual toggle button in header
@@ -111,6 +127,8 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Gradient Branding**: Consistent gradient theme throughout the application
 - **Badge System**: Status indicators and counters throughout the interface
 - **Empty States**: Helpful empty state messages with action buttons
+- **User Profile Display**: HR Manager profile with avatar and role information
+- **Sticky Header**: Fixed navigation header with backdrop blur effect
 
 ## Technical Architecture
 
@@ -135,17 +153,20 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **TypeScript**: Static type checking
 - **Vite**: Development server with hot reload
 - **Component Tagger**: Development-time component identification
-- **Custom Hooks**: Theme management with useTheme hook for state persistence
+- **Custom Hooks**: Theme management with useTheme hook and authentication with useAuth hook
 - **DnD Kit**: Advanced drag-and-drop functionality
 - **Radix UI**: Accessible component primitives
 - **Lucide Icons**: Professional icon library
 - **React Router**: Client-side routing with URL state management
+- **Context API**: State management for authentication and theme
 
 ## Component Architecture
 
 ### Layout Components
-- **Header**: Professional navigation with theme toggle and user profile
-- **Layout**: Main application wrapper with consistent spacing
+- **Header**: Professional navigation with theme toggle, logout button, and user profile
+- **Layout**: Main application wrapper with consistent spacing and background gradients
+- **ProtectedRoute**: Authentication guard component for route protection
+- **LoginPage**: Dedicated login interface with credential validation
 
 ### Feature Components
 - **JobsBoard**: Main jobs management interface with drag-and-drop
@@ -167,6 +188,11 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **NotesSection**: Rich notes with @mention support
 - **TimelineSection**: Chronological event display
 
+### Authentication Components
+- **AuthProvider**: Context provider for authentication state management
+- **AuthContext**: React context for authentication state and methods
+- **useAuth**: Custom hook for authentication operations (login, logout, state)
+
 ### UI Components
 - **Button**: Multiple variants with consistent styling
 - **Card**: Elevated content containers with hover effects
@@ -179,6 +205,7 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Checkbox/Radio**: Form selection components
 - **Dialog**: Modal dialog system
 - **Tooltip**: Contextual help system
+- **Label**: Form label components with accessibility support
 
 ## Data Models
 
@@ -235,7 +262,54 @@ interface Assessment {
 }
 ```
 
+### Authentication State
+```typescript
+interface AuthContextType {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: () => void;
+  logout: () => void;
+}
+```
+
 ## API Documentation
+
+### Authentication API
+
+#### POST /api/auth/login
+Authenticate user with email and password.
+
+**Request Body:**
+```typescript
+{
+  email: string;     // hr@talentflow.com
+  password: string;  // admin123
+}
+```
+
+**Response:**
+```typescript
+{
+  success: boolean;
+  message: string;
+  user?: {
+    email: string;
+    role: string;
+    name: string;
+  };
+}
+```
+
+#### POST /api/auth/logout
+Logout current user and clear session.
+
+**Response:**
+```typescript
+{
+  success: boolean;
+  message: string;
+}
+```
 
 ### Jobs API
 
@@ -481,6 +555,14 @@ All API responses follow a consistent error format:
 
 ## Key Technical Decisions
 
+### Authentication Architecture
+- **Context-based State Management**: React Context API for global authentication state
+- **LocalStorage Persistence**: Session persistence across browser refreshes
+- **Route Protection**: Higher-order component pattern for protected routes
+- **Hardcoded Credentials**: Demo-ready authentication with predefined credentials
+- **Automatic Redirects**: Seamless navigation between authenticated and public routes
+- **Loading States**: Proper UX during authentication state resolution
+
 ### Database Architecture
 - **IndexedDB over LocalStorage**: Handles large datasets (1000+ candidates) efficiently
 - **Dexie Wrapper**: Provides Promise-based API with TypeScript support
@@ -493,6 +575,7 @@ All API responses follow a consistent error format:
 - **Pagination Support**: Server-side pagination with metadata
 - **Error Simulation**: Random 5-10% error rate for robust error handling
 - **Data Caching**: In-memory cache to reduce IndexedDB calls
+- **Authentication Simulation**: Mock authentication endpoints with realistic responses
 
 ## Design System
 
