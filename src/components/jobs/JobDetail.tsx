@@ -5,8 +5,9 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Edit, Archive, RotateCcw, Users } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Edit, Archive, RotateCcw, Users, Send, CheckCircle } from 'lucide-react';
 import { useCandidateCount } from '@/hooks/use-candidate-count';
+import { Checkbox } from '@/components/ui/checkbox';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +29,11 @@ const JobDetail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
   const { count: candidateCount } = useCandidateCount(job?.id || '');
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [isPosting, setIsPosting] = useState(false);
+  const [postedPlatforms, setPostedPlatforms] = useState<string[]>([]);
+
+  const platforms = ['Company Website', 'LinkedIn', 'Glassdoor', 'College Drive', 'Referral'];
 
   // Fetch job data
   useEffect(() => {
@@ -88,6 +94,14 @@ const JobDetail = () => {
     }
   };
 
+  // Clear posted platforms when job is archived
+  useEffect(() => {
+    if (job?.status === 'archived') {
+      setPostedPlatforms([]);
+      setSelectedPlatforms([]);
+    }
+  }, [job?.status]);
+
   // Handle archive/unarchive
   const handleArchiveToggle = async () => {
     if (!job) return;
@@ -113,6 +127,40 @@ const JobDetail = () => {
       });
     } finally {
       setIsArchiving(false);
+    }
+  };
+
+  const handlePlatformToggle = (platform: string) => {
+    setSelectedPlatforms(prev => 
+      prev.includes(platform) 
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    );
+  };
+
+  const handlePostToPlatforms = async () => {
+    if (selectedPlatforms.length === 0) return;
+    
+    setIsPosting(true);
+    try {
+      // Simulate posting delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setPostedPlatforms(prev => [...prev, ...selectedPlatforms]);
+      setSelectedPlatforms([]);
+      
+      toast({
+        title: 'Job Posted Successfully',
+        description: `Job has been posted to ${selectedPlatforms.join(', ')}.`,
+      });
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to post job to platforms. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsPosting(false);
     }
   };
 
@@ -275,6 +323,67 @@ const JobDetail = () => {
                   </Badge>
                 ))}
               </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Post to Platforms Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Post to External Platforms</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Select platforms where you want to post this job opening:
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {platforms.map((platform) => {
+              const isPosted = postedPlatforms.includes(platform);
+              const isSelected = selectedPlatforms.includes(platform);
+              
+              return (
+                <div key={platform} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={platform}
+                    checked={isSelected}
+                    onCheckedChange={() => handlePlatformToggle(platform)}
+                    disabled={isPosted || isPosting || job.status === 'archived'}
+                  />
+                  <label 
+                    htmlFor={platform} 
+                    className={`text-sm font-medium cursor-pointer flex items-center space-x-2 ${
+                      isPosted ? 'text-green-600' : 'text-foreground'
+                    }`}
+                  >
+                    <span>{platform}</span>
+                    {isPosted && <CheckCircle className="h-4 w-4 text-green-600" />}
+                  </label>
+                </div>
+              );
+            })}
+          </div>
+          
+          {selectedPlatforms.length > 0 && job.status === 'active' && (
+            <div className="flex items-center justify-between pt-4 border-t">
+              <p className="text-sm text-muted-foreground">
+                {selectedPlatforms.length} platform{selectedPlatforms.length !== 1 ? 's' : ''} selected
+              </p>
+              <Button 
+                onClick={handlePostToPlatforms} 
+                disabled={isPosting}
+                className="flex items-center space-x-2"
+              >
+                <Send className="h-4 w-4" />
+                <span>{isPosting ? 'Posting...' : 'Post Job'}</span>
+              </Button>
+            </div>
+          )}
+          
+          {job.status === 'archived' && (
+            <div className="text-center py-4 text-muted-foreground">
+              <p className="text-sm">Job posting is disabled for archived jobs.</p>
             </div>
           )}
         </CardContent>
