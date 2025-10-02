@@ -183,23 +183,23 @@ const CandidateCard = ({ candidate, onStageUpdate, onClick }: CandidateCardProps
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={() => handleStageUpdate('applied')}>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleStageUpdate('applied'); }}>
                       Move to Applied
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleStageUpdate('screen')}>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleStageUpdate('screen'); }}>
                       Move to Screening
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleStageUpdate('tech')}>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleStageUpdate('tech'); }}>
                       Move to Technical
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleStageUpdate('offer')}>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleStageUpdate('offer'); }}>
                       Move to Offer
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleStageUpdate('hired')}>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleStageUpdate('hired'); }}>
                       Mark as Hired
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleStageUpdate('rejected')}>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleStageUpdate('rejected'); }}>
                       Mark as Rejected
                     </DropdownMenuItem>
                   </DropdownMenuContent>
