@@ -172,8 +172,8 @@ export function makeServer({ environment = 'development' } = {}) {
           
           // Generate job number and ID
           const data = await loadData();
-          const maxJobNumber = Math.max(...data.jobs.map(j => parseInt(j.jobNumber.replace('JOB-', ''))), 0);
-          const newJobNumber = `JOB-${String(maxJobNumber + 1).padStart(3, '0')}`;
+          const maxJobNumber = Math.max(...data.jobs.map(j => parseInt(j.jobNumber)), 10000);
+          const newJobNumber = String(maxJobNumber + 1);
           
           const newJob: Job = {
             id: generateId(),
