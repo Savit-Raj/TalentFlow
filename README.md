@@ -5,7 +5,7 @@
 
 A comprehensive, modern hiring platform built with React, TypeScript, and advanced web technologies. TalentFlow streamlines the entire recruitment process from job posting to candidate management and assessment creation.
 
-Login Credentials are on the login page also:
+Login Credentials
 Email: hr@talentflow.com
 Password: admin123
 
@@ -58,22 +58,27 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Job Details**: Requirements, location, salary, job type, and tags
 - **Unique Job Numbers**: 5-digit identifiers (10001-10025) for easy reference
 - **Archive System**: Soft delete with archive/unarchive functionality
+- **External Platform Integration**: Post jobs to LinkedIn, Glassdoor, Company Website, College Drive, and Referral platforms
+- **Platform Status Tracking**: Visual indicators for posted platforms with success confirmation
+- **Bulk Platform Posting**: Select multiple platforms and post simultaneously
+- **Platform Posting Controls**: Disable posting for archived jobs with clear status messaging
 
 ### Candidate Pipeline
 - **1000+ Candidate Management**: Efficient handling of large candidate pools
 - **Kanban Board**: Visual drag-and-drop stage management
 - **Drag and Drop**: Drag and Drop only works if the name is searched to avoid random allocations.
 - **6-Stage Pipeline**: Applied → Screening → Technical → Offer → Hired → Rejected
-- **Advanced Search**: Real-time filtering by name and email
-- **Stage Analytics**: Live counts for each pipeline stage
+- **Enhanced Search Capabilities**: Multi-field search across candidate name, email, applied job title, and job number
+- **Stage Analytics**: Live counts for each pipeline stage with real-time updates
+- **Job Integration**: Display job number and title for each candidate with direct linking
 - **Candidate Profiles**: Detailed view with skills, experience, and education
-- **Timeline Tracking**: Complete audit trail of candidate interactions
+- **Timeline Tracking**: Complete audit trail of candidate interactions with automatic stage change logging
 - **Notes System**: Rich text notes with @mention support
 - **Job-Candidate Linking**: Each candidate properly linked to applied job with job number display
 - **Profile Management**: Comprehensive candidate information including skills, experience, education
 - **Stage Management**: Easy stage transitions with timeline tracking
 - **@Mention System**: Team member mentions in notes with autocomplete
-- **Timeline Events**: Stage changes, notes, assessments, and interview scheduling
+- **Timeline Events**: Automatic stage change tracking, notes, assessments, and interview scheduling with real-time updates
 - **Candidate Cards**: Professional candidate display with stage indicators
 - **Email-based Routing**: Direct candidate profile access via email URLs
 
@@ -139,7 +144,6 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Tailwind CSS**: Utility-first styling with custom design system
 - **Radix UI**: Accessible component primitives
 - **React Router**: Client-side routing with URL state management
-- **TanStack Query**: Server state management and caching
 
 ### Data Management
 - **IndexedDB**: Client-side persistence with Dexie wrapper
@@ -469,6 +473,14 @@ Create or update assessment for a job.
 
 ### Advanced Features
 
+#### External Platform Integration
+- **Multi-Platform Posting**: Post jobs to Company Website, LinkedIn, Glassdoor, College Drive, and Referral platforms
+- **Platform Selection**: Checkbox-based platform selection with visual feedback
+- **Posting Status Tracking**: Real-time status updates with success indicators
+- **Platform Management**: Disable posting for archived jobs with clear messaging
+- **Bulk Operations**: Select and post to multiple platforms simultaneously
+- **Success Confirmation**: Visual checkmarks and toast notifications for successful posts
+
 #### Assessment Analytics
 - **Job-based Analytics**: Performance tracking per job position
 - **Completion Rates**: Assessment completion percentage tracking
@@ -477,11 +489,13 @@ Create or update assessment for a job.
 - **Real-time Updates**: Live analytics updates as assessments are completed
 
 #### Timeline System
+- **Automatic Stage Tracking**: Real-time timeline updates when candidate stages change
 - **Event Types**: Stage changes, notes, assessments, interviews
 - **Chronological Display**: Time-ordered event history
-- **Event Metadata**: Detailed information for each timeline entry
+- **Event Metadata**: Detailed information for each timeline entry including previous and new stages
 - **Relative Time**: Human-readable time formatting ("2h ago", "3d ago")
 - **Visual Timeline**: Professional timeline design with icons and colors
+- **Stage Change Details**: Complete audit trail with before/after stage information
 
 #### Notes & Mentions
 - **@Mention Autocomplete**: Team member suggestion dropdown
@@ -641,7 +655,7 @@ All API responses follow a consistent error format:
 - **Limited File Upload**: File upload questions are UI-only
 - **No Email Integration**: Assessment assignments are manual
 - **No Real-time Collaboration**: Single-user editing sessions
-- **Mock Timeline**: Timeline entries are generated, not real interactions
+- **Simulated Platform Posting**: External platform integration is UI simulation only
 
 ### Future Enhancements
 - **Multi-tenant Support**: Organization and user management

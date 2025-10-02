@@ -5,24 +5,19 @@
 
 import { createServer, Response } from 'miragejs';
 import { db } from './database';
-import type { Job, Candidate, Assessment } from './database';
+import type { Job, Candidate, Assessment, TimelineEntry } from './database';
 
 // Generate unique ID
 const generateId = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
-interface TimelineItem {
-  candidateId: string;
-  createdAt: Date;
-}
-
 // Cache for data to avoid repeated IndexedDB calls
 let dataCache: {
   jobs: Job[];
   candidates: Candidate[];
   assessments: Assessment[];
-  timeline: TimelineItem[];
+  timeline: TimelineEntry[];
 } | null = null;
 
 // Simulate network latency and errors for write operations
@@ -62,6 +57,8 @@ async function loadData() {
     return { jobs: [], candidates: [], assessments: [], timeline: [] };
   }
 }
+
+
 
 export function makeServer({ environment = 'development' } = {}) {
   return createServer({
@@ -370,6 +367,38 @@ export function makeServer({ environment = 'development' } = {}) {
           };
           
           await db.candidates.put(updatedCandidate);
+          
+          // Create timeline entry if stage changed
+          if (updates.stage && updates.stage !== candidate.stage) {
+            const stageLabels = {
+              applied: 'Applied',
+              screen: 'Screening',
+              tech: 'Technical',
+              offer: 'Offer',
+              hired: 'Hired',
+              rejected: 'Rejected',
+            };
+            
+            const timelineEntry = {
+              id: generateId(),
+              candidateId,
+              type: 'stage_change' as const,
+              title: `Stage changed to ${stageLabels[updates.stage as keyof typeof stageLabels]}`,
+              description: `Candidate moved from ${stageLabels[candidate.stage as keyof typeof stageLabels]} to ${stageLabels[updates.stage as keyof typeof stageLabels]}`,
+              metadata: {
+                previousStage: candidate.stage,
+                newStage: updates.stage,
+              },
+              createdAt: new Date(),
+            };
+            
+            await db.timeline.add(timelineEntry);
+            
+            // Update timeline cache
+            if (dataCache) {
+              dataCache.timeline.push(timelineEntry);
+            }
+          }
           
           // Update cache
           if (dataCache) {

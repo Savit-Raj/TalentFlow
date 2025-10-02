@@ -101,8 +101,11 @@ const CandidateProfile = () => {
         description: 'Candidate stage has been updated successfully.',
       });
 
-      // Refresh timeline to show the new entry
-      fetchCandidate();
+      // Only refresh timeline to show the new entry
+      const timelineResult = await CandidatesApi.getCandidateTimeline(candidate.id);
+      if (timelineResult.data) {
+        setTimeline(timelineResult.data as TimelineEntry[]);
+      }
     } catch (error: unknown) {
       toast({
         title: 'Error',
@@ -112,7 +115,7 @@ const CandidateProfile = () => {
     } finally {
       setIsUpdating(false);
     }
-  }, [candidate, toast, fetchCandidate]);
+  }, [candidate, toast]);
 
   // Handle note addition
   const handleAddNote = useCallback(async (note: string) => {
