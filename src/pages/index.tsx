@@ -10,12 +10,14 @@
  * - Responsive design with animations
  */
 
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { ArrowRight, Briefcase, Users, ClipboardList, BarChart3, Zap, Shield } from 'lucide-react';
+import { ArrowRight, Briefcase, Users, ClipboardList, BarChart3, Zap, Shield, Globe } from 'lucide-react';
 import ButtonExports from '@/components/ui/button';
 const { Button } = ButtonExports;
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
+import { CandidatesApi } from '@/lib/api';
 
 const Index = () => {
   const features = [
@@ -126,6 +128,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Platform Analytics */}
+      <PlatformAnalytics />
+
       {/* Technical Highlights */}
       <section className="space-y-8">
         <div className="text-center space-y-4">
@@ -146,39 +151,6 @@ const Index = () => {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Technology Stack */}
-      <section className="space-y-8">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold">Technology Stack</h2>
-          <p className="text-muted-foreground text-lg">
-            Powered by cutting-edge technologies
-          </p>
-        </div>
-
-        <Card className="card-elevated">
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-blue-600">React</div>
-                <p className="text-sm text-muted-foreground">Frontend Framework</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-blue-500">TypeScript</div>
-                <p className="text-sm text-muted-foreground">Type Safety</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-teal-600">Tailwind</div>
-                <p className="text-sm text-muted-foreground">Styling</p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-orange-600">IndexedDB</div>
-                <p className="text-sm text-muted-foreground">Local Storage</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </section>
 
       {/* Call to Action */}
@@ -205,6 +177,105 @@ const Index = () => {
         </div>
       </section>
     </div>
+  );
+};
+
+const PlatformAnalytics = () => {
+  const [platformStats, setPlatformStats] = useState<Array<{ platform: string; count: number; percentage: number }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPlatformStats = async () => {
+      try {
+        const result = await CandidatesApi.getCandidates({ pageSize: 1000 });
+        if (result.error) throw new Error(result.error.message);
+
+        const candidates = result.data.data;
+        const totalCandidates = candidates.length;
+
+        const platformCounts = candidates.reduce((acc, candidate) => {
+          const platform = candidate.platform || 'Unknown';
+          acc[platform] = (acc[platform] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const stats = Object.entries(platformCounts)
+          .map(([platform, count]) => ({
+            platform,
+            count,
+            percentage: totalCandidates > 0 ? Math.round((count / totalCandidates) * 100) : 0
+          }))
+          .sort((a, b) => b.count - a.count);
+
+        setPlatformStats(stats);
+      } catch {
+        setPlatformStats([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPlatformStats();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="space-y-8">
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl font-bold">Platform Traffic</h2>
+          <p className="text-muted-foreground text-lg">
+            Candidate acquisition by platform
+          </p>
+        </div>
+        <Card className="card-elevated">
+          <CardContent className="pt-6">
+            <div className="animate-pulse grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="text-center space-y-2">
+                  <div className="h-8 bg-muted rounded w-20 mx-auto"></div>
+                  <div className="h-4 bg-muted rounded w-16 mx-auto"></div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+    );
+  }
+
+  return (
+    <section className="space-y-8">
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-center space-x-2">
+          <Globe className="h-8 w-8 text-primary" />
+          <h2 className="text-3xl font-bold">Platform Traffic</h2>
+        </div>
+        <p className="text-muted-foreground text-lg">
+          Candidate acquisition across external platforms
+        </p>
+      </div>
+
+      <Card className="card-elevated">
+        <CardContent className="pt-6">
+          {platformStats.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 text-center">
+              {platformStats.map(({ platform, count, percentage }) => (
+                <div key={platform} className="space-y-2">
+                  <div className="text-3xl font-bold text-primary">{percentage}%</div>
+                  <div className="text-lg font-semibold">{platform}</div>
+                  <p className="text-sm text-muted-foreground">{count} candidates</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Globe className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No platform data available</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </section>
   );
 };
 

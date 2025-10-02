@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, Users, Send, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { BarChart3, Users, Send, CheckCircle, XCircle, Clock, Globe } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { JobsApi, CandidatesApi } from '@/lib/api';
 import type { Job } from '@/lib/database';
+
+interface PlatformStats {
+  platform: string;
+  count: number;
+  percentage: number;
+}
 
 interface JobAnalysis {
   job: Job;
@@ -13,6 +19,7 @@ interface JobAnalysis {
   assessmentCompleted: number;
   assessmentFailed: number;
   notReceived: number;
+  platformStats: PlatformStats[];
 }
 
 const AssessmentAnalysis = () => {
@@ -46,13 +53,29 @@ const AssessmentAnalysis = () => {
           const assessmentSent = jobCandidates.filter(c => ['tech', 'offer', 'hired', 'rejected'].includes(c.stage)).length;
           const notReceived = totalCandidates - assessmentSent;
 
+          // Calculate platform distribution
+          const platformCounts = jobCandidates.reduce((acc, candidate) => {
+            const platform = candidate.platform || 'Unknown';
+            acc[platform] = (acc[platform] || 0) + 1;
+            return acc;
+          }, {} as Record<string, number>);
+
+          const platformStats: PlatformStats[] = Object.entries(platformCounts)
+            .map(([platform, count]) => ({
+              platform,
+              count,
+              percentage: totalCandidates > 0 ? Math.round((count / totalCandidates) * 100) : 0
+            }))
+            .sort((a, b) => b.count - a.count);
+
           return {
             job,
             totalCandidates,
             assessmentSent,
             assessmentCompleted,
             assessmentFailed,
-            notReceived
+            notReceived,
+            platformStats
           };
         });
 
@@ -128,7 +151,7 @@ const AssessmentAnalysis = () => {
         </Card>
       ) : (
         <div className="space-y-4">
-          {jobAnalytics.map(({ job, totalCandidates, assessmentSent, assessmentCompleted, assessmentFailed, notReceived }) => (
+          {jobAnalytics.map(({ job, totalCandidates, assessmentSent, assessmentCompleted, assessmentFailed, notReceived, platformStats }) => (
             <Card key={job.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -144,50 +167,69 @@ const AssessmentAnalysis = () => {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                   {/* Total Candidates */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col items-center space-y-2">
                     <Users className="h-4 w-4 text-blue-500" />
-                    <div>
+                    <div className="text-center">
                       <p className="text-2xl font-bold text-blue-600">{totalCandidates}</p>
                       <p className="text-xs text-muted-foreground">Total Candidates</p>
                     </div>
                   </div>
 
                   {/* Assessment Sent */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col items-center space-y-2">
                     <Send className="h-4 w-4 text-orange-500" />
-                    <div>
+                    <div className="text-center">
                       <p className="text-2xl font-bold text-orange-600">{assessmentSent}</p>
                       <p className="text-xs text-muted-foreground">Assessment Sent</p>
                     </div>
                   </div>
 
                   {/* Completed */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col items-center space-y-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <div>
+                    <div className="text-center">
                       <p className="text-2xl font-bold text-green-600">{assessmentCompleted}</p>
                       <p className="text-xs text-muted-foreground">Completed</p>
                     </div>
                   </div>
 
                   {/* Failed */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col items-center space-y-2">
                     <XCircle className="h-4 w-4 text-red-500" />
-                    <div>
+                    <div className="text-center">
                       <p className="text-2xl font-bold text-red-600">{assessmentFailed}</p>
                       <p className="text-xs text-muted-foreground">Failed/Rejected</p>
                     </div>
                   </div>
 
                   {/* Not Received */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col items-center space-y-2">
                     <Clock className="h-4 w-4 text-gray-500" />
-                    <div>
+                    <div className="text-center">
                       <p className="text-2xl font-bold text-gray-600">{notReceived}</p>
                       <p className="text-xs text-muted-foreground">Not Received</p>
                     </div>
                   </div>
                 </div>
+
+                {/* Platform Distribution */}
+                {platformStats.length > 0 && (
+                  <div className="mt-6">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Globe className="h-4 w-4 text-primary" />
+                      <h4 className="text-sm font-medium">Platform Distribution</h4>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                      {platformStats.map(({ platform, count, percentage }) => (
+                        <div key={platform} className="bg-muted/50 rounded-lg p-3 text-center">
+                          <p className="text-lg font-bold text-primary">{count}</p>
+                          <p className="text-xs text-muted-foreground truncate">{platform}</p>
+                          <p className="text-xs text-muted-foreground">{percentage}%</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Progress Bar */}
                 {totalCandidates > 0 && (
