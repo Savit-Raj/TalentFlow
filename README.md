@@ -47,7 +47,7 @@ Access the application at `https://talentflowsavit.vercel.app/`
 - **Hero Section**: Gradient background with platform introduction
 - **Feature Cards**: Interactive cards showcasing platform capabilities
 - **Statistics Display**: Real-time platform statistics (25+ Jobs, 1000+ Candidates)
-- **Technology Stack**: Visual representation of technical architecture
+- **Platform Traffic**: Analytics for candidate acquisitions across external platforms
 - **Call-to-Action**: Strategic navigation to key platform features
 - **Responsive Layout**: Mobile-optimized dashboard experience
 
@@ -381,14 +381,14 @@ Create a new job posting.
 
 **Response:** `Job`
 
-#### PUT /api/jobs/:jobId
+#### PATCH /api/jobs/:jobId
 Update existing job.
 
 **Request Body:** `Partial<Job>`
 
 **Response:** `Job`
 
-#### POST /api/jobs/:jobId/reorder
+#### PATCH /api/jobs/:jobId/reorder
 Reorder job position in the list.
 
 **Request Body:**
@@ -431,7 +431,7 @@ Retrieve paginated list of candidates with filtering.
 }
 ```
 
-#### PUT /api/candidates/:candidateId
+#### PATCH /api/candidates/:candidateId
 Update candidate information or stage.
 
 **Request Body:**

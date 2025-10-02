@@ -41,7 +41,7 @@ export interface Candidate {
   phone?: string;
   stage: 'applied' | 'screen' | 'tech' | 'offer' | 'hired' | 'rejected';
   jobId: string;
-  platform: 'Indeed' | 'LinkedIn' | 'Glassdoor' | 'AngelList' | 'Company Website';
+  platform: 'Company Website' | 'LinkedIn' | 'Glassdoor' | 'College Drive' | 'Referral';
   resumeUrl?: string;
   notes: string[];
   createdAt: Date;
